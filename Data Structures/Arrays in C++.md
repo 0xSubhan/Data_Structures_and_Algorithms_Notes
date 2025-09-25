@@ -4598,3 +4598,126 @@ This should be fairly straightforward, but there are a few things worth noting:
 >but now im doing dsa from youtube and following a playlist so if i learn something extra i will add below!
 
 ---
+### Question: Linear Search
+
+```cpp
+// Linear Search:
+template <typename T, std::size_t N>
+bool LinearSearch(T (&arr)[N], T ToFindVal)
+{
+    for (size_t i = 0; i < N; i++)
+    {
+        if (arr[i] == ToFindVal)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+int main()
+{
+    // Linear Search:
+    int arrForLinear[] {1,2,3,4,5};
+    int val {};
+    std::cout << "Find: ";
+    std::cin >> val;
+    bool found { LinearSearch(arrForLinear,val) };
+
+    if (found)
+    {
+        std::cout << "found!" << std::endl;
+    }
+    else
+        std::cout << "Not Found!" << std::endl;
+}
+```
+
+---
+### Question: Reverse Array
+
+```cpp
+// Reverse an array:
+template <std::size_t N>
+void reverseArr(int (&arr)[N])
+{
+    int start {0};
+    int end {N-1};
+    
+    while (start<=end)
+    {
+        int temp = {arr[start]};
+        arr[start] = arr[end];
+        arr[end] = temp;
+
+        start++; end--;
+        
+        // An easy method would be to just use the build in function swap();
+    }
+}
+int main()
+{
+    int arrToBeReverse[10] {1,2,3,4,5,6,7,8,9,10};
+
+    testPrintArr(arrToBeReverse);
+
+    reverseArr(arrToBeReverse);
+
+    testPrintArr(arrToBeReverse);
+}
+```
+
+```Ouput
+1 2 3 4 5 6 7 8 9 10 
+10 9 8 7 6 5 4 3 2 1 
+```
+
+>👉 **Reversing an array** means swapping each element from the front with its _corresponding_ element from the back until you reach the middle. (And also reversing that middle element to itself)
+
+---
+### Question: Finding Min and Max
+
+```cpp
+template <std::size_t N>
+void FindMin(int (&arr)[N])
+{
+    std::size_t min_index {0};
+    for (size_t i = 1; i < N; i++)
+    {
+        /* code */
+        if (arr[i] < arr[min_index])
+        {
+            /* code */
+            min_index = i;
+        }
+    }
+    std::cout << "\nMin: " << arr[min_index] << std::endl;
+}
+template <std::size_t N>
+void FindMax(int (&arr)[N])
+{
+    std::size_t max_index {0};
+    for (size_t i = 1; i < N; i++)
+    {
+        /* code */
+        if (arr[i] > arr[max_index])
+        {
+            /* code */
+            max_index = i;
+        }
+    }
+    std::cout << "\nMax: " << arr[max_index] << std::endl;
+}
+
+int main()
+{
+    int arr102[10] = {1,2,3,4,0,6,7,8,9,10};
+    FindMin(arr102);
+    FindMax(arr102);
+}
+```
+
+> For Finding Minimum val in an array, we just first make a temp variable which will hold firstly the 0 index which will be the default minimum value and iterate through the array and if `arr[i]` is less than that default element then we will change that default index from 0 to that element index whom is less than that default value and it will iterate and apply the same logic until we find a absolute minimum value!
+
+>Same logic applies to maximum but now we will look for `is greater than`!
+
+---
