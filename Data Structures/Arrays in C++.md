@@ -4721,3 +4721,162 @@ int main()
 >Same logic applies to maximum but now we will look for `is greater than`!
 
 ---
+### Question: Swap Alternate Array
+
+```cpp
+// Alternate Swap:
+template <std::size_t N>
+void swapAlt(int (&arr)[N])
+{
+    for (size_t i = 0; i < N; i+=2)
+    {
+        if (i+1 < N)
+        {
+            std::swap(arr[i],arr[i+1]);
+            // alternate swapping method:
+			int temp = arr[i];
+			arr[i] = arr[i+1];
+			arr[i+1] = temp;   
+        }
+    }
+}
+int main()
+{
+    // Alternate Swap Imp:
+    int arrAlt[] {1,2,3,4,5,6};
+    testPrintArr(arrAlt);
+    swapAlt(arrAlt);
+    testPrintArr(arrAlt);
+}
+```
+
+> So in this question we will swap the alternate elements of an array, for example if we have an array `[1,2,3,4,5,6]` we will swap 1 with 2 and 3 with 4 and so on.
+> To do this we will use for loop for traversing an array to its full size, and then firstly we will check if(i+1 < size) which means it will check if next element exist or not if it does not exist then we will not swap because then it will mean the i+1 is the last element so it does not have other element to swap with but if other element exist then we will swap it like `swap(arr[i],arr[i+1])` and then we will increment our index with 2 not 1 because if we increment with 1 then it will go to the next element after swapping and that element which is already swapped will also be swapped which we don't want so we will increment index with 2 so it will go to the next element from the already 2 swapped elements!
+> 
+> One more thing about the following logic: if(i+1 < N)
+> Here N is the length of the array not index length but total length which in our case is 6 now what does i+1 do is that lets assume our i is at the end index which is 5 and it will be incremented to +1 so it becomes 6 which in our case there is nothing at index 6 so it should not stop here and that's what our logic is doing (6<6) which is false so no swap!
+
+---
+### Question: Find Unique Number
+
+```cpp
+// Find Unique Element:
+template <std::size_t N>
+int findUnique(int (&arr)[N])
+{
+    int ans {}; // { 2 }
+
+    for (size_t i = 0; i < N; i++)
+    {
+        ans = ans^arr[i];
+    }
+
+    return ans;
+    
+}
+int main()
+{
+	int arr[] {2, 3, 1, 6, 3, 6, 2};
+	findUnique(arr);
+}
+```
+
+>Here we are finding the unique number in the array, the best way is to use xor whose logic is that if two operands of xor is same then it cancel it out and gives us zero so we know that those numbers are not unique so in our question case we had the constraint of having 2 pairs of same numbers and one unique number so same number will cancel out and give 0 and `0^unique` will return unique and that will be the unique number!
+
+**Explanation (easy version):**  
+We use XOR to find the unique number.
+
+- Rule: `a ^ a = 0` (same numbers cancel out), and `a ^ 0 = a`.
+    
+- Since every number in the array appears twice except one, all pairs cancel out to `0`.
+    
+- Only the number without a pair is left.
+    
+
+So the final result is the **unique element**. ✅
+
+---
+### Question : [1207. Unique Number of Occurrences](https://leetcode.com/problems/unique-number-of-occurrences/)
+
+> Solution:
+
+```cpp
+
+class Solution {
+public:
+    bool uniqueOccurrences(vector<int>& arr) {
+        sort(arr.begin(),arr.end());
+        vector<int> count;
+
+        for(std::size_t index = 0; index < arr.size(); index++)
+        {
+            int cnt = 1;
+            for(std::size_t index2 = index+1; index2 < arr.size(); index2++)
+            {
+                if(arr[index] == arr[index2] && index2 < arr.size())
+                {
+                    cnt++;
+                    index++;
+                }
+            }
+            count.push_back(cnt);
+        }
+
+        sort(count.begin(), count.end());
+
+        for(std::size_t index = 1; index < count.size(); index++)
+        {
+            // only need to check neighboruing elmenet since its sorted and if there is same element we will return false:
+            if( count[index] == count[index-1] )
+            {
+	            return false;
+            }
+        }
+        return true;
+        
+    }
+};
+```
+
+##### 📌 Problem Restatement
+
+You are asked:
+
+> Given an integer array `arr`, return `true` if the **number of occurrences** of each value in the array is **unique**, otherwise return `false`.
+
+So essentially:
+
+- Count how many times each number appears.
+    
+- If two numbers have the same frequency, return `false`.
+    
+- Otherwise return `true`.
+
+>[!Note]
+>For this question there was another approach of using hash maps but i didn't completed hash maps yet so here is another approach:
+
+>[!Explanation]
+
+- **Sort the array** → This ensures equal elements are next to each other, making it easier to count their occurrences.
+    
+- **Count frequencies** → Traverse the array and count how many times each element occurs.
+    
+    - Use an inner loop to compare the current element with the next ones.
+        
+    - When duplicates are found, increment the count and move the outer index forward so the same element is not recounted.
+        
+    - Store each element’s count in a separate `count` vector.
+        
+- **Check uniqueness of frequencies** →
+    
+    - Sort the `count` vector.
+        
+    - If any two neighboring values are equal, it means two elements share the same frequency → return `false`.
+        
+    - Otherwise, return `true`.
+
+#### 🔑 Main Issue I Fixed
+
+Initially, I was recounting the same element multiple times because I didn’t skip over duplicates properly. Once I adjusted the index correctly, the logic worked.
+
+---
