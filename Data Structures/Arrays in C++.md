@@ -4880,3 +4880,73 @@ So essentially:
 Initially, I was recounting the same element multiple times because I didn’t skip over duplicates properly. Once I adjusted the index correctly, the logic worked.
 
 ---
+### Question: Duplicate in Array
+
+```cpp
+int findDuplicate(std::vector<int>& arr)
+{
+    int ans = 0;
+
+    for (size_t i = 0; i < arr.size(); i++)
+    {
+        ans = ans ^arr[i];
+    }
+
+    for (size_t i = 1; i < arr.size(); i++)
+    {
+        ans = ans^i;
+    }
+    return ans;
+    
+}
+```
+
+>So the question :
+>So we have given an array of size `N` which contains number from 1 to `N-1` which is atleast present one time for example `[1,2,3,4,4]` array has `N=5` and numbers are from 1 to `N-1 -> 4` so numbers are 1,2,3,4 and there is single element in array which is present twice, and our task is to find that number.
+
+>[!Solution]
+
+First, we traverse the array and XOR all its elements. This gives us a combined value where every element (including the duplicate) is present. Then, we traverse from `1` to `N-1` (the expected numbers in the array) and XOR them with the result. Since XOR cancels out identical numbers, all the numbers that appear exactly once will cancel with their counterparts, leaving behind only the duplicate number (because it appeared twice in the array). Finally, we return this duplicate value.
+
+` (1 ^ 3 ^ 4 ^ 2 ^ 2) ^ (1 ^ 2 ^ 3 ^ 4) = 2 `
+
+---
+### Question: [442. Find All Duplicates in an Array](https://leetcode.com/problems/find-all-duplicates-in-an-array/)
+
+> So the question was, we have given an array `nums` which have length n and where all integers inside the array are in the range of 1 to `N` and each integer appears at most twice which means range of duplicate is 2 so there cant be more than a pair of duplicate meaning we cant have `[3,3,3]` and we have to return an array containing the duplicate element.
+
+>[!Solution]
+
+### ⚙️ How it Works
+
+1. **Sort the array**  
+    Sorting ensures that if a number is repeated, its duplicate will be **right next to it**.  
+    Example:
+
+```cpp
+Input:  [4, 3, 2, 7, 8, 2, 3, 1]
+Sorted: [1, 2, 2, 3, 3, 4, 7, 8]
+```
+
+- **Traverse the array**  
+    For each element at position `index`, compare it with the **next element (`index+1`)**.
+    
+    - `nums[index] ^ nums[index+1]` → XOR of the two numbers.
+        
+    - If they are **equal**, XOR = 0.
+        
+    - `!(nums[index] ^ nums[index+1])` → becomes `true` when numbers are equal.
+    - But before that we have to check if index+1 which means other element exist if it doesn't exit that will mean its the end of array element and there is no element to check with.
+        
+    
+    Example:
+    
+    - `nums[1] = 2, nums[2]` = 2 → `2 ^ 2 = 0 → !(0) = true` → duplicate found.
+        
+- **Store duplicates**  
+    If a duplicate is found, push it into the result vector `ans`.
+    
+- **Return result**  
+    At the end, return all found duplicates.
+
+---
