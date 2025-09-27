@@ -5070,3 +5070,112 @@ i=4, j=2 → 3==3 → ans=[2,2,3], i++, j++
 - Both give the same result, but two-pointer is much faster.
 
 ---
+### Question: PairSum
+
+```cpp
+std::vector<std::vector<int>> sumPair(std::vector<int>& arr, int s)
+{
+    std::vector<std::vector<int>> ans;
+
+    for (size_t i = 0; i < arr.size(); i++)
+    {
+        for (size_t j = i+1; j < arr.size(); j++)
+        {
+            int sum = arr[i] + arr[j];
+            if (sum == s)
+            {
+                std::vector<int> temp;
+                temp.push_back(std::min(arr[i], arr[j])); // smaller element first
+                temp.push_back(std::max(arr[i], arr[j])); // larger element second
+
+                ans.push_back(temp); // push this pair into the 2D vector
+            }
+        }
+    }
+
+    // Sort the final list of pairs in ascending order
+    std::sort(ans.begin(), ans.end());
+
+    return ans;
+}
+```
+
+#### Step-by-Step Working
+
+1. **Function Input**
+    
+    - Takes an integer array `arr` (passed by reference).
+        
+    - Takes a target sum `s`.
+        
+2. **Answer Storage (`ans`)**
+    
+    - `ans` is a **2D vector** (`vector<vector<int>>`) where each element is a pair `{x, y}` such that `x + y == s`.
+        
+3. **Nested Loops**
+    
+    - Outer loop → goes through each element.
+        
+    - Inner loop → checks all elements that come **after** the current element.
+        
+    - This ensures we don’t repeat the same pair twice.
+        
+4. **Check Condition**
+
+	```cpp
+	if (sum == s)
+	```
+	If the sum of `arr[i] + arr[j]` equals `s`, we found a valid pair.
+	
+5. **Store Pair in Sorted Order**
+
+	```cpp
+	temp.push_back(std::min(arr[i], arr[j]));
+	temp.push_back(std::max(arr[i], arr[j]));
+	```
+	Ensures each pair is stored in **increasing order** (e.g., `{2, 5}` instead of `{5, 2}`).
+	
+6. **Push Pair into 2D Vector**
+
+	```cpp
+	ans.push_back(temp);
+	```
+
+7. **Sort All Pairs**
+
+	```cpp
+	std::sort(ans.begin(), ans.end());
+	```
+	Makes the list of pairs sorted in **dictionary order** (like lexicographical order for vectors).
+
+8. **Return Result**
+
+	- Finally, returns the 2D vector `ans` containing all sorted pairs that add up to `s`.
+
+#### Example
+
+Input:
+
+```cpp
+arr = {1, 5, 7, -1, 5},  s = 6
+```
+
+Execution:
+
+- Pairs found: `{1, 5}`, `{7, -1}`, `{1, 5}` (again because another `5` exists).
+    
+- After sorting:
+
+```cpp
+[[-1, 7], [1, 5], [1, 5]]
+```
+
+Output:
+
+```cpp
+[[-1, 7], [1, 5], [1, 5]]
+```
+
+✅ So, this function **finds all pairs of numbers that sum to `s` and returns them in sorted order inside a 2D vector**.
+
+---
