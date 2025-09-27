@@ -4950,3 +4950,123 @@ Sorted: [1, 2, 2, 3, 3, 4, 7, 8]
     At the end, return all found duplicates.
 
 ---
+### Question: Intersection With simple and optimized approach TLE
+
+#### 📝 Problem: Intersection of Two Sorted Arrays
+
+We are given two **sorted arrays** (`arr1`, `arr2`).  
+We need to return a vector containing elements that are common in both arrays.  
+Duplicates should be handled properly (e.g., `[1,2,2,2,3,4]` and `[2,2,3,3]` → intersection is `[2,2,3]`).
+
+#### **1. Brute Force (Nested Loop + Marking)**
+
+```cpp
+std::vector<int> intersection(std::vector<int>& arr1, std::vector<int>& arr2) {
+    std::vector<int> ans;
+
+    for (size_t i = 0; i < arr1.size(); i++) {
+        for (size_t j = 0; j < arr2.size(); j++) {
+            
+            if (arr1[i] < arr2[j]) // optimization
+                break; // arrays are sorted, so no need to check further
+            
+            if (arr1[i] == arr2[j]) {
+                ans.push_back(arr1[i]);  // store common element
+                
+                // mark arr2[j] so we don't reuse the same element again
+                arr2[j] = INT_MIN;
+                break; // move to next element in arr1
+            }
+        }
+    }
+    return ans;
+}
+```
+
+#### 🔎 How it Works
+
+1. For each element in `arr1`, scan through `arr2`.
+    
+2. If the arrays are sorted, once `arr1[i] < arr2[j]`, we can break early (optimization).
+		--> because if `arr[i]` is less than `arr2[j]` then all the other elements will be larger so no need to check them because we will not find equal value.
+    
+3. When a match is found (`arr1[i] == arr2[j]`), push it into `ans`.
+    
+4. To avoid counting the same element from `arr2` multiple times, set `arr2[j] = INT_MIN` (a marker).
+    
+5. Continue until all possible matches are checked.
+
+#### ⚙️ Example
+
+```cpp
+arr1 = [1,2,2,2,3,4]
+arr2 = [2,2,3,3]
+
+→ Match 2 → ans = [2]
+→ Match 2 → ans = [2,2]
+→ Match 3 → ans = [2,2,3]
+```
+
+✅ Output = `[2,2,3]`
+
+#### **2. Optimized Two-Pointer Approach**
+
+```cpp
+std::vector<int> intersection_OPT(std::vector<int>& arr1, std::vector<int>& arr2) {
+    std::vector<int> ans;
+    int i = 0, j = 0;
+
+    while (i < arr1.size() && j < arr2.size()) {
+        if (arr1[i] == arr2[j]) {
+            ans.push_back(arr1[i]);
+            i++;
+            j++;
+        }
+        else if (arr1[i] < arr2[j]) {
+            i++; // move forward in arr1
+        }
+        else {
+            j++; // move forward in arr2
+        }
+    }
+    return ans;
+}
+```
+
+### 🔎 How it Works
+
+1. Use two pointers `i` (for arr1) and `j` (for arr2).
+    
+2. If `arr1[i] == arr2[j]` → add to answer and move both pointers.
+    
+3. If `arr1[i] < arr2[j]` → move `i` forward.
+    
+4. If `arr1[i] > arr2[j]` → move `j` forward.
+    
+5. Stop when one array ends.
+    
+
+#### ⚙️ Example
+
+```cpp
+arr1 = [1,2,2,2,3,4]
+arr2 = [2,2,3,3]
+
+i=0, j=0 → 1<2 → i++
+i=1, j=0 → 2==2 → ans=[2], i++, j++
+i=2, j=1 → 2==2 → ans=[2,2], i++, j++
+i=3, j=2 → 2<3 → i++
+i=4, j=2 → 3==3 → ans=[2,2,3], i++, j++
+```
+
+✅ Output = `[2,2,3]`
+
+#### ✅ **For Notes Summary:**
+
+- The brute force solution uses nested loops and marking with `INT_MIN`. Complexity = O(n*m).
+    
+- The optimized solution uses the **two-pointer technique** on sorted arrays. Complexity = O(n+m).
+    
+- Both give the same result, but two-pointer is much faster.
+
+---
