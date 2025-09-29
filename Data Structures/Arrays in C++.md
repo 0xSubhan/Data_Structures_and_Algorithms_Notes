@@ -5179,3 +5179,334 @@ Output:
 ✅ So, this function **finds all pairs of numbers that sum to `s` and returns them in sorted order inside a 2D vector**.
 
 ---
+### Question: Triplet Sum pair
+
+```cpp
+// Find Triplet Pair:
+std::vector< std::vector<int> > tripletPair(std::vector<int>& arr, int k)
+{
+    std::vector< std::vector<int> > ans; 
+    
+    for (size_t i = 0; i < arr.size(); i++)
+    {
+        for (size_t j = i+1; j < arr.size(); j++)
+        {
+            for (size_t l = j+1; l < arr.size(); l++)
+            {
+                if (arr[i] + arr[j] + arr[l] == k)
+                {
+                    std::vector<int> temp;
+                    temp.push_back( arr[i] );
+                    temp.push_back( arr[j] );
+                    temp.push_back( arr[l] );
+
+                    std::sort(temp.begin(), temp.end());
+
+                    ans.push_back( temp );
+                }
+            }
+        }  
+    }
+
+    std::sort(ans.begin(), ans.end());
+    return ans;
+}
+int main()
+{
+    std::vector testTrip {1,2,3,4,5};
+
+    auto TRIP { tripletPair(testTrip,12) };
+
+    for (size_t i = 0; i < TRIP.size(); i++)
+    {
+        /* code */
+        for (size_t j = 0; j < TRIP[i].size(); j++)
+        {
+            /* code */
+            std::cout << TRIP[i][j] << " ";
+        }
+        std::cout << '\n';
+    }
+}
+```
+
+```Output
+3 4 5 
+```
+
+>[!Explanation]
+
+#### Problem:
+
+Find all unique triplets in an array whose sum is equal to a given value `k`.
+
+#### Approach (Brute Force, `O(n³)`):
+
+1. Use **three nested loops** to try all possible triplets `(i, j, l)`.
+    
+    - `i` starts at 0,
+        
+    - `j` starts at `i+1`,
+        
+    - `l` starts at `j+1`.  
+        This ensures no element is reused and avoids reversed duplicates like `[a,b,c]` vs `[b,a,c]`.
+        
+2. For each triplet, check if:
+    
+    `arr[i] + arr[j] + arr[l] == k`
+    
+3. If the sum matches:
+    
+    - Store the triplet in a temporary vector `temp`.
+        
+    - Sort `temp` so the order is consistent (e.g. `[3,1,2]` → `[1,2,3]`).
+        
+    - Push `temp` into the answer vector `ans`.
+        
+4. After all loops, sort `ans` so the final result is ordered.
+    
+
+
+---
+### Question: Sort 1,0
+
+#### Problem
+
+> We have given an integer of arrays with N elements and elements are 0 and 1 only, and we have to sort the array in such a way that all left values are 0 and all right values are 1.
+
+```cpp
+// Sort 0,1
+std::vector< int > SortOneZero(std::vector<int>& arr)
+{
+    int left {0} , right {arr.size()-1};
+
+    while (left < right)
+    {
+        while (arr[left] == 0 && left < right)
+        {
+            left++;
+        }
+        while (arr[right] == 1 && left < right)
+        {
+            right--;
+        }
+        
+        // Now state is swap is necessary:
+        
+        std::swap(arr[left],arr[right]);
+        left++; right--;
+    }
+    return arr;
+}
+```
+
+#### **How It Works**
+
+1. **Two-Pointer Approach**
+    
+    - `left` starts from the beginning of the array.
+        
+    - `right` starts from the end of the array.
+        
+2. **Skip Correctly Placed Elements**
+    
+    - If `arr[left] == 0`, it’s already in the correct place → move `left` forward.
+        
+    - If `arr[right] == 1`, it’s already in the correct place → move `right` backward.
+        
+3. **Swap Wrongly Placed Elements**
+    
+    - If `arr[left] == 1` and `arr[right] == 0`, swap them.
+        
+    - After swapping, move both pointers (`left++`, `right--`).
+        
+4. **Stop Condition**
+    
+    - Loop continues until `left` crosses `right`.
+        
+    - At that point, all `0`s are on the left, all `1`s on the right.
+
+#### **Example**
+
+Input:
+
+```cpp
+arr = {1, 0, 1, 0, 1, 0}
+```
+
+Steps:
+
+- left=0 (1), right=5 (0) → swap → {0,0,1,0,1,1}
+    
+- left=1 (0) → move → left=2
+    
+- right=4 (1) → move → right=3
+    
+- left=2 (1), right=3 (0) → swap → {0,0,0,1,1,1}
+    
+- left=3, right=2 → stop
+    
+
+Output:
+
+```cpp
+{0, 0, 0, 1, 1, 1}
+```
+
+#### **Time & Space Complexity**
+
+- **Time Complexity:** `O(n)` → Each element is checked at most once.
+    
+- **Space Complexity:** `O(1)` → Sorting is done in-place, no extra array.
+
+---
+### Question: Sort 0,1,2:
+
+--> Problem:
+
+Given an array `nums` with `n` objects colored red, white, or blue, sort them **[in-place](https://en.wikipedia.org/wiki/In-place_algorithm)** so that objects of the same color are adjacent, with the colors in the order red, white, and blue.
+
+We will use the integers `0`, `1`, and `2` to represent the color red, white, and blue, respectively.
+
+You must solve this problem without using the library's sort function.
+
+**Example 1:**
+
+`**Input:** nums = [2,0,2,1,1,0]
+`**Output:** [0,0,1,1,2,2]`
+`
+>Solution
+
+```cpp
+class Solution {
+public:
+    void sortColors(vector<int>& nums) {
+        // Two Pointer Approach:
+        int left {0}; int right { static_cast<int>(nums.size()-1 )}; int current {0};
+        while(current <= right)
+        {
+            if(nums[current] == 0)
+            {
+                swap(nums[current],nums[left]);
+                current++; left++;
+            }
+            else if(nums[current] == 2)
+            {
+                swap(nums[current],nums[right]);
+                right--;
+            }
+            else 
+            {
+                current++; // condition for 1 logic
+            }
+        }
+    }
+};
+```
+
+#### 📝 Detailed Explanation of `sortColors`
+
+##### Problem Statement
+
+You are given an array containing only `0`s, `1`s, and `2`s.
+
+- `0` → red
+    
+- `1` → white
+    
+- `2` → blue
+    
+
+You must sort them **in-place** so that all `0`s come first, then `1`s, then `2`s.  
+This is known as the **Dutch National Flag problem**.
+
+##### 🧠 Key Idea (Three Regions)
+
+The algorithm partitions the array into **four regions** dynamically:
+
+```scss
+[ 0 ... left-1 ]   → all 0s (red region)
+[ left ... current-1 ] → all 1s (white region)
+[ current ... right ]  → unprocessed (unknown yet)
+[ right+1 ... n-1 ] → all 2s (blue region)
+```
+
+- `left` expands the **0-region**.
+    
+- `right` shrinks the **2-region**.
+    
+- `current` scans the **unprocessed region**.
+
+##### 🔄 Step-by-Step Logic
+
+1. **When `nums[current] == 0`**
+    
+    - Swap with `nums[left]`.
+        
+    - Both `left` and `current` move forward (because the swapped-in element at `current` has already been processed).
+        
+    
+    ✅ This places the `0` in the left region.
+    
+2. **When `nums[current] == 2`**
+
+	- Swap with `nums[right]`.
+	    
+	- Decrement `right`.
+	    
+	- **Do not increment `current` yet**, because the new element swapped into `current` may be `0` or `2`, and must be reprocessed.
+	    
+	
+	✅ This places the `2` in the right region.
+	
+3. **When `nums[current] == 1`**
+
+	- Just `current++`.
+	    
+	- `1`s naturally fall into the middle region.
+	    
+	
+	✅ This builds the white region.
+
+##### 📊 Example Dry Run
+
+Input:
+
+```ini
+nums = [2,0,2,1,1,0]
+```
+
+Steps:
+
+1. `current=0, nums[0]=2` → swap with right=5  
+    → [0,0,2,1,1,2], right=4
+    
+2. `current=0, nums[0]=0` → swap with left=0  
+    → [0,0,2,1,1,2], left=1, current=1
+    
+3. `current=1, nums[1]=0` → swap with left=1  
+    → [0,0,2,1,1,2], left=2, current=2
+    
+4. `current=2, nums[2]=2` → swap with right=4  
+    → [0,0,1,1,2,2], right=3
+    
+5. `current=2, nums[2]=1` → just move current=3
+    
+6. `current=3, nums[3]=1` → just move current=4
+    
+
+Loop ends (`current=4 > right=3`).
+
+Output:
+
+```csharp
+[0,0,1,1,2,2]
+```
+
+##### ⏱️ Complexity Analysis
+
+- **Time Complexity:** `O(n)` → Each element is processed at most once.
+    
+- **Space Complexity:** `O(1)` → In-place sorting, no extra storage.
+
+---
