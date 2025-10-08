@@ -579,3 +579,151 @@ This way, the `head` pointer in `main` is modified directly.
 |Local head|More flexible|Pass by reference or return new head|
 
 ---
+# Linked List in C/C++ - Insert a node at nth position
+
+## 🧩 **Goal of the Lesson**
+
+We’re learning how to **insert a node at any position (Nth position)** in a singly linked list — not just at the start or end.
+
+This is the next logical step after learning:
+
+- Insert at beginning
+    
+- Insert at end
+    
+
+Now you’re learning **insert at Nth position**, which generalizes both.
+
+## 🧠 **Conceptual Idea**
+
+Think of a linked list like a **chain of boxes**, each box (node) having:
+
+- `data` — the value inside it
+    
+- `next` — a pointer (address) to the next box
+    
+
+We want to **add a new box at position N** (e.g., 3rd position).  
+To do this, we need to:
+
+1. Create the new box.
+    
+2. Find the box **before** that position (the (N−1)th box). // because that will contain the address of the next box!
+    
+3. Connect the links properly so the chain isn’t broken.
+
+## 🧱 **Detailed Logic Behind the Four Steps**
+
+### 1️⃣ Create a New Node
+
+We create a node dynamically (from heap memory) because we don’t know at compile time how many nodes we’ll need.
+
+```cpp
+Node* temp1 = new Node();
+temp1->data = val;
+temp1->next = nullptr;
+```
+
+This allocates a new memory block for the node.  
+Now, `temp1` points to that new block.
+
+### 2️⃣ Move to the (N−1)th Node
+
+Let’s say you want to insert at the **3rd position**.
+
+That means you need to find the **2nd node** because:
+
+- The 2nd node currently points to the 3rd node.
+    
+- After insertion, the 2nd node should point to your new node.
+    
+
+We can move to the (N−1)th node using a loop:
+
+```cpp
+Node* temp2 = head;
+for (int i = 1; i < n - 1; i++)
+{
+    temp2 = temp2->next;
+}
+```
+
+After this loop:
+
+- `temp2` points to the node **before** the insertion point.
+
+### 3️⃣ Link the New Node to the Rest of the List
+
+We don’t want to lose connection with the remaining nodes.
+
+So we first connect the **new node** to the next node:
+
+```cpp
+temp1->next = temp2->next;
+```
+
+Now, your new node points to the node that was originally after `(N-1)`.
+
+### 4️⃣ Link the Previous Node to the New Node
+
+Finally, update the `(N−1)`th node’s link to point to the new node:
+
+```cpp
+temp2->next = temp1;
+```
+
+This completes the insertion — all nodes are connected in proper order again.
+
+## ⚙️ **Special Case: Inserting at Beginning (N = 1)**
+
+If position = 1:
+
+- You don’t need to find any previous node (because there’s none).
+    
+- You simply make your new node point to the current head, and then make the new node the head.
+
+```cpp
+if (n == 1)
+{
+    temp1->next = head;
+    head = temp1;
+    return;
+}
+```
+
+## 🧮 **Visualization Example**
+
+Let’s simulate inserting step by step:
+
+### Initially:
+
+```cpp
+head → [2 | *] → [3 | *] → nullptr
+```
+
+### Insert 8 at position 3:
+
+1. Create node `[8 | *]`
+    
+2. Go to (N−1)th = 2nd node (`[3]` is currently 2nd node)
+    
+3. Set new node’s next = 2nd node’s next
+    
+4. Update 2nd node’s next to new node
+    
+
+Result:
+
+```cpp
+head → [2 | *] → [3 | *] → [8 | *] → nullptr
+
+```
+
+If we insert at position 1 instead:
+
+```cpp
+[8 | *] → [2 | *] → [3 | *]
+head points to new node
+```
+
+---
