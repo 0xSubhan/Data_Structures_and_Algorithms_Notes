@@ -1006,3 +1006,5 @@ delete temp2;
 does in code.
 
 ---
+# Reverse a linked list - Iterative method
+
