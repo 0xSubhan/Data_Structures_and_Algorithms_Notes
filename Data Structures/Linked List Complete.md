@@ -1008,3 +1008,112 @@ does in code.
 ---
 # Reverse a linked list - Iterative method
 
+### 🧠 **Understanding the Problem: Reverse a Linked List**
+
+A **Linked List** is made of **nodes**, where each node has:
+
+- `data` → stores a value (like `100`, `200`, etc.)
+    
+- `next` → stores the address of the next node
+    
+
+💡 **Goal:** Turn this  
+`100 → 200 → 150 → 250 → NULL`  
+into this  
+`250 → 150 → 200 → 100 → NULL`
+
+We are **not changing the data**, we are **reversing the links (pointers)**.
+
+### 🔁 Solution: **Iterative Method** (Using 3 Pointers)
+
+To reverse a linked list, we use **three pointers**:
+
+|Pointer|Purpose|
+|---|---|
+|`current`|Points to the node being processed|
+|`previous`|Points to the node that comes before `current` in the reversed list|
+|`next`|Temporarily stores the next node so we don’t lose it|
+### 🔍 Step-by-Step Logic
+
+#### 🔹 Step 1: Initialization
+
+```cpp
+previous = NULL      // Before start, nothing is reversed
+current = head       // Start from the first node
+```
+
+##### 🔹 Step 2: Loop through the list
+
+While `current != NULL`, we do:
+
+1️⃣ **Save next node**  
+`next = current->next`  
+(We save the rest of the list so we don’t lose it)
+
+2️⃣ **Reverse the link**  
+`current->next = previous`  
+(Makes the current node point backward)
+
+3️⃣ **Move forward**
+
+```cpp
+previous = current
+current = next
+```
+
+Repeat these steps until `current` becomes `NULL`.
+
+#### 🔚 Step 3: Final Update
+
+At end, `previous` will be pointing to the **new head** (last node of original list).  
+So we set:  
+`head = previous`
+
+### 🏃 Example in Action
+
+Input: `100 → 200 → 150 → 250`
+
+|Step|current|previous|next|Action (current.next = previous)|
+|---|---|---|---|---|
+|Init|100|NULL|||
+|1|100|NULL|200|`100 → NULL`|
+|2|200|100|150|`200 → 100 → NULL`|
+|3|150|200|250|`150 → 200 → 100 → NULL`|
+|4|250|150|NULL|`250 → 150 → 200 → 100 → NULL`|
+✅ Final Head = `250`
+
+### 🧾 C-like Function Prototype
+
+```cpp
+node* reverse(node* head) {
+    node* current = head;
+    node* previous = NULL;
+    node* next = NULL;
+
+    while (current != NULL) {
+        next = current->next;     // Step 1
+        current->next = previous; // Step 2
+        previous = current;       // Step 3a
+        current = next;           // Step 3b
+    }
+
+    return previous; // New head
+}
+```
+
+### ⚙ Edge Cases Handled
+
+|Case|Behavior|
+|---|---|
+|**Empty List** (`head = NULL`)|Returns NULL|
+|**One Node** (`10 → NULL`)|Nothing changes, returns same node|
+|**Multiple Nodes**|Fully reversed|
+### ✅ Final Output Example
+
+**Before:**  
+`2 4 6 8`
+
+**After:**  
+`8 6 4 2`
+
+---
