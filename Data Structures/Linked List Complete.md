@@ -1117,3 +1117,81 @@ node* reverse(node* head) {
 `8 6 4 2`
 
 ---
+# Recursive Traversal of Linked Lists
+
+### Introduction to Recursive Linked List Traversal
+
+This lesson builds upon previous linked list operations (insertion, deletion, traversal). The main goal is to implement recursive functions to traverse and print linked list elements. A prerequisite is understanding recursion as a programming concept. Recursive traversal helps solve interesting problems, and in this lesson, we'll keep it simple by just printing elements.
+
+Two main functions will be covered:
+
+- **Print Function:** Traverses and prints elements in normal order.
+    
+- **Reverse Print Function:** Traverses and prints elements in reversed order without actually reversing the list.
+
+### Linked List Node Structure
+
+A linked list of integers is used as an example, consisting of four nodes. Each node has two fields:
+
+- **Data:** Stores the value.
+    
+- **Next:** Stores the address of the next node.
+    
+
+Example node addresses: 100, 200, 150, 250. A `head` variable stores the address of the first node. Programmatically, a node is defined as a structure with data and a pointer to the next node.
+
+### Implementing the Print Function (Normal Order)
+
+The `print` function takes the address of a node (initially the head node) as an argument. Inside the function:
+
+1. **Print current node's data:** Use a `printf` statement to display the value at the current node.
+    
+2. **Recursive call:** Make another call to the `print` function, passing the address of the next node (`p->next`).
+    
+3. **Exit condition:** The recursion stops when `p` (the current node's address) is `NULL`. This prevents infinite recursive calls. When `p` is `NULL`, the function returns without making further calls.
+
+```cpp
+void printOrder_recursion(Node*& node)
+{
+    if (node == nullptr)
+    {
+        return;
+    }
+    cout << node->val << "-->";
+    printOrder_recursion(node->next);
+}
+```
+
+### Implementing the Reverse Print Function
+
+To print the elements in reverse order, a slight modification to the `print` function is needed:
+
+1. **Recursive call first:** Instead of printing the value first, the recursive call to `reversePrint` (or the modified `print` function) is made _before_ printing the current node's data.
+    
+2. **Print after recursion returns:** After the recursive call finishes, the current node's value is printed.
+    
+3. **Exit condition:** Same as the normal print function, the recursion exits when `p` is `NULL`.
+    
+
+This order ensures that the deepest recursive calls (representing the last nodes in the list) execute their print statements first as the call stack unwinds.
+
+#### Understanding Recursion Execution (Stack and Heap)
+
+- **Recursion Tree:** Visualizes the sequence of function calls. Each call processes its node, then makes a recursive call until the exit condition is met.
+    
+- **Memory Allocation:**
+    
+    - **Stack:** Stores details of function call execution and local variables. Each function invocation (including recursive calls) gets its own stack frame. When a function calls itself, it's similar to calling another function; a new stack frame is created for each call. The function at the top of the stack is currently executing.
+        
+    - **Heap:** Stores dynamically allocated memory. Nodes of the linked list are typically allocated in the heap.
+        
+
+As recursive calls are made, stack frames build up. When the exit condition is met, the stack frames unwind, executing any remaining code in the functions in reverse order of their calls. This unwinding is what enables the reverse print functionality.
+
+#### Efficiency Considerations
+
+- **Normal Traversal:** An iterative approach is more efficient than a recursive one because recursion uses significant stack memory for each function call, whereas iteration only requires a single temporary variable.
+    
+- **Reverse Print:** Recursion is an acceptable approach for reverse printing, as it implicitly uses the call stack to store elements in the order needed for reversal. Alternatively, one would need to use another data structure like an array or an explicit stack to achieve the same without actual list reversal.
+
+---
