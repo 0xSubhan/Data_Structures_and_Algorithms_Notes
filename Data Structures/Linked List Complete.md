@@ -1195,3 +1195,147 @@ As recursive calls are made, stack frames build up. When the exit condition is m
 - **Reverse Print:** Recursion is an acceptable approach for reverse printing, as it implicitly uses the call stack to store elements in the order needed for reversal. Alternatively, one would need to use another data structure like an array or an explicit stack to achieve the same without actual list reversal.
 
 ---
+# Reversing a linked list using Recursion
+
+### 🧠 Key Concept in Recursion
+
+Recursion works by:
+
+1. **Going forward** until the base (end) condition.
+    
+2. **Coming back** (unwinding), performing work on the way back.
+    
+
+In linked list reversal:
+
+- **Forward phase:** Reach the last node.
+    
+- **Backward phase:** Reverse the links as we return.
+
+### 📌 Example Linked List
+
+```cpp
+100 → 200 → 150 → 250 → NULL
+```
+
+Goal:
+
+```cpp
+250 → 150 → 200 → 100 → NULL
+```
+
+### 🗂 Step-by-Step Recursive Logic
+
+### 1️⃣ Base Case (Stop Condition)
+
+If `p == NULL` or `p->next == NULL`, return (this is the last node).
+
+### 2️⃣ Recursive Call (Go deeper)
+
+Call `reverse(p->next)` to reach the last node.
+
+### 3️⃣ Reverse Links (On the way back!)
+
+Once recursion returns, we reverse the link:
+
+```cpp
+p->next->next = p   // Make next node point back to current node
+p->next = NULL      // Break original forward link
+```
+
+### 🗺️ Visual Understanding (Stack Flow)
+
+Let's simulate `reverse(100)`:
+
+```cpp
+reverse(100)
+ └── reverse(200)
+      └── reverse(150)
+           └── reverse(250)
+                └── base case reached (last node)
+```
+
+Now, we **come back** and reverse links:
+
+|Returning From|Action (Reverse)|
+|---|---|
+|reverse(250)|Head becomes 250|
+|reverse(150)|250 → 150|
+|reverse(200)|150 → 200|
+|reverse(100)|200 → 100|
+
+Result:
+
+```cpp
+250 → 150 → 200 → 100 → NULL
+```
+
+### 🧾 Pseudocode for Recursive Reverse
+
+```cpp
+node* reverse(node* p) {
+    // Base Condition: last node or empty list
+    if (p == NULL || p->next == NULL) {
+        head = p;  // Set new head
+        return;
+    }
+
+    reverse(p->next);        // Go to the end
+    p->next->next = p;       // Reverse link
+    p->next = NULL;          // Break old link
+}
+```
+
+### 🧬 How Recursion Stores Progress?
+
+Every function call (node) is stored in **stack memory**, so when we reach the last node, the stack unwinds and links every node in reverse.
+
+### ⚡ Shortcut Trick
+
+Instead of:
+
+```cpp
+q->next = p;
+p->next = NULL;
+```
+
+We can use:
+
+```cpp
+p->next->next = p;
+```
+
+But this is harder to read — not recommended for beginners.
+
+### 🎯 Final Result
+
+Original:
+
+```cpp
+100 → 200 → 150 → 250
+```
+
+Reversed (recursively):
+
+```cpp
+250 → 150 → 200 → 100
+```
+
+### Complete Code
+
+```cpp
+void Reverse_recursion(Node*& node) // node is local variable which we will set to head in main() // 
+{   
+    if (node->next == nullptr)
+    {
+        head = node;
+        return;
+    }
+    Reverse_recursion(node->next);
+    Node* pre = node->next;
+    pre->next = node;
+    node->next = nullptr;
+}
+```
+
+---
