@@ -1339,3 +1339,413 @@ void Reverse_recursion(Node*& node) // node is local variable which we will set 
 ```
 
 ---
+# Doubly Linked List Complete
+
+### Introducing Doubly Linked Lists
+
+A doubly linked list extends the concept of a singly linked list by adding a second link to each node. In addition to a pointer to the next node, each node also contains a pointer to the previous node. This allows for traversal in both forward and backward directions.
+
+### Node Structure for Doubly Linked List
+
+In C/C++, a doubly linked list node structure would include:
+
+- A field for data (e.g., an integer).
+    
+- A pointer field to the next node.
+    
+- A pointer field to the previous node.
+    
+
+For example, if nodes are at addresses 400, 600, and 800:
+
+- **Node at 400:** data, `next` points to 600, `prev` is `null`.
+    
+- **Node at 600:** data, `next` points to 800, `prev` points to 400.
+    
+- **Node at 800:** data, `next` is `null`, `prev` points to 600.
+
+### Advantages of Doubly Linked Lists
+
+- **Bidirectional Traversal:** Allows movement forward and backward through the list from any given node.
+    
+- **Easier Lookups:** With a pointer to any node, you can access the current, next, and previous nodes directly.
+    
+- **Simplified Deletion:** Deleting a node is simpler as only one pointer to the node to be deleted is needed, unlike singly linked lists which require a pointer to the previous node as well.
+
+### Disadvantages of Doubly Linked Lists
+
+- **Increased Memory Usage:** Each node requires extra memory for the 'previous' pointer. For instance, an integer node might consume 12 bytes (4 for data, 8 for two pointers) compared to 8 bytes in a singly linked list.
+    
+- **More Complex Link Management:** Insertion and deletion operations require careful updating of more links, increasing the potential for errors.
+
+### Dynamic Memory Allocation (Heap vs. Stack)
+
+Nodes should be created in the **heap** (dynamic memory) using `malloc` (in C) or `new` (in C++) to ensure they persist beyond the function call where they are created. Local variables declared on the **stack** are deallocated once the function finishes, which is not suitable for linked list nodes that need to exist throughout the program's lifecycle.
+
+### Complete Implementation 
+
+```cpp
+#include <string>
+#include <string_view>
+#include <iostream>
+
+using namespace std;
+
+struct Node
+{
+    int data;
+    Node* pre;
+    Node* next;
+
+    Node(int val)
+        : data {val}
+        , pre {nullptr}
+        , next {nullptr}
+    {
+    }
+};
+
+Node* head = nullptr;
+
+// Insert at front:
+void insertAtFront(int val)
+{
+    Node* newNode = new Node(val);
+    // Special Case if list is empty:
+    if (head == nullptr)
+    {
+        head = newNode;
+        return;
+    }
+    head->pre = newNode;
+    newNode->next = head;
+    head = newNode;
+}
+// Print List:
+void printList()
+{
+    Node* temp = head;
+    while (temp != nullptr)
+    {
+        cout << temp->data << " ";
+        temp = temp->next;
+    }
+    cout << '\n';    
+}
+// Insert at end:
+void insertAtEnd(int val)
+{
+    Node* newNode = new Node(val);
+    if (head == nullptr)
+    {
+        head = newNode;
+        return;
+    }
+    Node* temp1 = head;
+    while (temp1->next != nullptr)
+    {
+        temp1 = temp1->next;
+    }
+    newNode->pre = temp1;
+    temp1->next = newNode; 
+} 
+// Inserting Node at nth position:
+void insertAtN(int val,int n)
+{
+    Node* newNode = new Node(val);
+    if (n == 1)
+    {
+        newNode->next = head;
+        if (head != nullptr)
+        {
+            head->pre = newNode;
+        }
+        head = newNode;
+        
+        return;
+    }
+    Node* current = head; 
+    
+    for (size_t i = 1; i < n - 1; i++)
+    {
+        current = current->next;
+    }
+    Node* afterN = current->next;
+    current->next = newNode;
+    newNode->pre = current;
+    newNode->next = afterN;
+    afterN->pre = newNode;
+}
+// Print list using Recursion:
+void printList_recursion(Node* node = head)
+{
+    if (node == nullptr)
+    {
+        return;
+    }
+    
+    cout << node->data << " ";
+    printList_recursion(node->next);
+}
+// Printing Reverse Double Linked list using recursion:
+void printReverse_recursion(Node* node = head)
+{
+    if (node == nullptr)
+    {
+        return;
+    }
+    printReverse_recursion(node->next);
+    cout << node->data << " ";
+}  
+// Reversing double linked list using recursion:
+void Reverse_list_recursion(Node* node = head)
+{
+    if (node->next == nullptr)
+    {
+        node->next = node->pre;
+        node->pre = nullptr;
+        head = node;
+        return;
+    }
+    Reverse_list_recursion(node->next);
+    Node* prevAddress = node->pre;
+    node->pre = node->next;
+    node->next = prevAddress;
+}
+
+int main() {
+
+    insertAtFront(1);
+    insertAtFront(2);
+    insertAtFront(3);
+    insertAtFront(4);
+    insertAtFront(5);
+    printList();
+
+    // Inserting 15 to our list at the end:
+    insertAtEnd(15);
+    printList();
+
+    // Implementing Insert at Nth position function:
+        // Will be inserting 
+    insertAtN(0,6);
+    printList(); 
+    
+    // Printing using Recursion:
+    cout << "Recursive Iteration:" << endl;
+    printList_recursion();
+
+    // Printing Reverse List Using Recursion:
+    cout << "\nReverse Iteration:" << endl;
+    printReverse_recursion();
+    
+    // Reverse the Double linked list using recursion:
+
+
+
+    cout << endl;
+    return 0;
+}
+```
+
+### 🔽 1️⃣ `insertAtFront(int val)` – Insert at Beginning
+
+**Purpose:**  
+Add a new node at the start of the list (before the current head).
+
+```cpp
+void insertAtFront(int val)
+{
+    Node* newNode = new Node(val);
+    if (head == nullptr)
+    {
+        head = newNode;
+        return;
+    }
+    head->prev = newNode;
+    newNode->next = head;
+    head = newNode;
+}
+```
+
+#### 🧠 Logic:
+
+|Step|Explanation|
+|---|---|
+|1️⃣|Create a new node using `new Node(val)`|
+|2️⃣|If the list is empty (`head == nullptr`) → make new node the `head`|
+|3️⃣|If list not empty → connect new node **before** current head|
+|4️⃣|Update previous head's `prev` to newNode|
+|5️⃣|Point `head` to new node (new head)|
+
+### 🔍 2️⃣ `printList()` – Print Forward (Iterative)
+
+```cpp
+void printList()
+{
+    Node* temp = head;
+    while (temp != nullptr)
+    {
+        cout << temp->data << " ";
+        temp = temp->next;
+    }
+    cout << '\n';    
+}
+```
+
+#### 🧠 Logic:
+
+|Step|Action|
+|---|---|
+|1️⃣|Start from `head`|
+|2️⃣|Print each node’s `data`|
+|3️⃣|Move to `next` node until `nullptr`|
+|4️⃣|Prints list in forward direction|
+
+### 🟦 3️⃣ `insertAtEnd(int val)` – Insert at Tail
+
+```cpp
+void insertAtEnd(int val)
+{
+    Node* newNode = new Node(val);
+    if (head == nullptr)
+    {
+        head = newNode;
+        return;
+    }
+    Node* temp1 = head;
+    while (temp1->next != nullptr)
+    {
+        temp1 = temp1->next;
+    }
+    newNode->prev = temp1;
+    temp1->next = newNode; 
+} 
+```
+
+#### 🧠 Logic:
+
+|Step|Action|
+|---|---|
+|1️⃣|Create a `newNode`|
+|2️⃣|If list is empty → `head = newNode`|
+|3️⃣|Otherwise, move to **last node** (`while temp1->next != nullptr`)|
+|4️⃣|Link last node's `next` → newNode|
+|5️⃣|Set `newNode->prev` → last node|
+
+### 📍 4️⃣ `insertAtN(int val, int n)` – Insert at Specific Position
+
+```cpp
+void insertAtN(int val,int n)
+{
+    Node* newNode = new Node(val);
+    if (n == 1)
+    {
+        newNode->next = head;
+        if (head != nullptr)
+        {
+            head->prev = newNode;
+        }
+        head = newNode;
+        
+        return;
+    }
+    Node* current = head; 
+    
+    for (int i = 1; i < n - 1; i++)
+    {
+        current = current->next;
+    }
+    Node* afterN = current->next;
+    current->next = newNode;
+    newNode->prev = current;
+    newNode->next = afterN;
+    if (afterN != nullptr)
+        afterN->prev = newNode;
+}
+```
+
+#### 🧠 Logic:
+
+|Step|Action|
+|---|---|
+|1️⃣|Create new node|
+|2️⃣|If `n == 1` → insert at front like `insertAtFront`|
+|3️⃣|Traverse to position `n-1`|
+|4️⃣|Save pointer to node currently at position `n` (`afterN`)|
+|5️⃣|Link new node between `current` and `afterN`|
+|6️⃣|Update both `next` and `prev` pointers carefully|
+
+### 🔁 5️⃣ `printList_recursion(Node* node)` – Print Forward Recursively
+
+```cpp
+void printList_recursion(Node* node = head)
+{
+    if (node == nullptr)
+    {
+        return;
+    }
+    cout << node->data << " ";
+    printList_recursion(node->next);
+}
+```
+
+#### 🧠 Logic:
+
+|Step|Explanation|
+|---|---|
+|🔹 Base Case|If node is `nullptr`, stop recursion|
+|🔹 Print|Print `data` of current node|
+|🔁 Recursive Call|Move to `node->next`|
+
+### 🔁 6️⃣ `printReverse_recursion(Node* node)` – Print Backward
+
+```cpp
+void printReverse_recursion(Node* node = head)
+{
+    if (node == nullptr)
+    {
+        return;
+    }
+    printReverse_recursion(node->next);
+    cout << node->data << " ";
+}  
+```
+
+#### 🧠 Logic:
+
+|Step|Action|
+|---|---|
+|🔹 First go to the end using recursion||
+|🔁 On return, print data (reverse order)||
+
+### 🔄 7️⃣ `Reverse_list_recursion(Node* node)` – Reverse Entire DLL
+
+```cpp
+void Reverse_list_recursion(Node* node = head)
+{
+    if (node->next == nullptr)
+    {
+        node->next = node->prev;
+        node->prev = nullptr;
+        head = node;
+        return;
+    }
+    Reverse_list_recursion(node->next);
+    Node* prevAddress = node->prev;
+    node->prev = node->next;
+    node->next = prevAddress;
+}
+```
+
+#### 🧠 Logic:
+
+|Step|Action|
+|---|---|
+|🔚 Base Case|When last node found|
+|🔁 Swap|`next` and `prev` pointers|
+|🔁 Head Update|Last node becomes `head`|
+|🔁 Recursively reverse remaining links||
+
+---
+
