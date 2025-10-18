@@ -230,3 +230,140 @@ Binary Search **divides by 2 each time**, so it takes **log₂(n) steps**, not n
 > Therefore, the time complexity of Binary Search in the worst and average case is **O(log n)**, because it performs approximately `log₂(n)` comparisons.”
 
 ---
+# Question: [Find First and Last Position of Element in Sorted Array](https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/)
+
+## Statement
+
+Given an array of integers `nums` sorted in non-decreasing order, find the starting and ending position of a given `target` value.
+
+If `target` is not found in the array, return `[-1, -1]`.
+
+You must write an algorithm with `O(log n)` runtime complexity.
+
+**Example 1:**
+
+**Input:** nums = [5,7,7,8,8,10], target = 8
+**Output:** [3,4]
+
+**Example 2:**
+
+**Input:** nums = [5,7,7,8,8,10], target = 6
+**Output:** [-1,-1]
+
+**Example 3:**
+
+**Input:** nums = [], target = 0
+**Output:** [-1,-1]
+
+
+```cpp
+class Solution {
+public:
+    // Finding first occurence:
+    int firstOcc(vector<int>& arr,int target)
+    {
+        int s = 0 , e = arr.size() - 1;
+        int mid = s + (e-s)/2;
+        int ans = -1;
+
+        while(s <= e)
+        {
+            if(arr[mid] == target)
+            {
+                ans = mid;
+                e = mid - 1; 
+            }
+            else if(arr[mid] < target) // move right
+            {
+                s = mid + 1;
+            }
+            else if(arr[mid] > target) // move left
+            {
+                e = mid - 1;
+            }
+            mid = s + (e-s)/2;
+        }
+        return ans;
+    }
+    // Finding second occurence:
+    int secondOcc(vector<int>& arr,int target)
+    {
+        int s = 0 , e = arr.size() - 1;
+        int mid = s + (e-s)/2;
+        int ans = -1;
+
+        while(s <= e)
+        {
+            if(arr[mid] == target)
+            {
+                ans = mid;
+                s = mid + 1; 
+            }
+            else if(arr[mid] < target) // move right
+            {
+                s = mid + 1;
+            }
+            else if(arr[mid] > target) // move left
+            {
+                e = mid - 1;
+            }
+            mid = s + (e-s)/2;
+        }
+        return ans;
+    }
+    vector<int> searchRange(vector<int>& nums, int target) {
+        vector<int> firstAndlast;
+        firstAndlast.push_back(firstOcc(nums,target));
+        firstAndlast.push_back(secondOcc(nums,target)); 
+
+        return firstAndlast;
+    }
+};
+```
+
+--> My Approach:
+
+> For finding first occurrence, i made start and end and made mid and for storing index of first occurrence `ans` i followed binary search approach in which i started from mid and if mid match my target then we still don't know if its first occurrence so we know that our array is sorted so now we have to go left to check if target is also available in that portion and will do so until we find the first occurrence and we would do so by moving the end index to mid-1 which will take us to left portion.
+> 
+
+> Its same for last occurrence but now if we find target we move right by moving start to mid+1!
+
+
+### 🔍 1️⃣ **Function: firstOcc()**
+
+**Goal:** Find the **first (leftmost)** index where `target` appears.
+
+#### ✨ Key Idea:
+
+Even if you find the target, keep searching **left side** to check if it appears earlier.
+
+#### 🧾 Notes:
+
+- `ans = -1` → Default if target not found.
+    
+- `e = mid - 1` → Continue searching **left** side.
+    
+- Returns **first index** of target.
+
+### 🔁 2️⃣ **Function: secondOcc()**
+
+**Goal:** Find the **last (rightmost)** index where `target` appears.
+
+#### ✨ Key Difference:
+
+After finding target, search **right side** for later occurrence.
+
+#### 🧾 Notes:
+
+- Similar to `firstOcc()`, but searches in **right direction**.
+    
+- Returns **last index** of target.
+
+### 🧭 Summary Table
+
+|Function|Direction|When Found Target|Purpose|
+|---|---|---|---|
+|`firstOcc()`|Search Left|`e = mid - 1`|First Index|
+|`secondOcc()`|Search Right|`s = mid + 1`|Last Index|
+
+---
