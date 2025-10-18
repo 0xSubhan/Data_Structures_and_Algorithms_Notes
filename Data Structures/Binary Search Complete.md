@@ -160,11 +160,73 @@ int binarySearch(int arr[],int size,int key)
 ✅ Extremely fast → `O(log n)`  
 ✅ Return `index` if found, `-1` if not found
 
-### 🔍 **What Is a Logarithm?**
+### ✂️  How the Search Space Reduces
 
-A **logarithm** answers this question:
+Binary Search doesn’t check all elements.  
+It **cuts the array into half** each step:
 
-> **"To what power must I raise a certain base number to get another number?"**
+| Step                                      | Elements Remaining |
+| ----------------------------------------- | ------------------ |
+| Start                                     | n                  |
+| 1st step                                  | n / 2              |
+| 2nd step                                  | n / 4              |
+| 3rd step                                  | n / 8              |
+| …                                         | …                  |
+| k-th step, at kth step there is 1 element | n / (2^k)          |
 
-==Continue topic of log from here !
+We stop when **only 1 element** is left.
 
+### ❓ **When Will It Stop?**
+
+The algorithm stops when:
+
+`n/2^k = 1 => n=2^k => k=log2(n)`
+
+👉 This `k` is the **number of steps/iterations**.
+
+### 🧾 **Time Complexity Calculation**
+
+| Case             | Explanation                         | Complexity   |
+| ---------------- | ----------------------------------- | ------------ |
+| **Best Case**    | Middle is the target in first check | **O(1)**     |
+| **Worst Case**   | Keep dividing until 1 element left  | **O(log n)** |
+| **Average Case** | Similar to worst case               | **O(log n)** |
+### 📌 **Why O(log n)? (Connecting to Log Definition)**
+
+Recall the definition of logarithm:
+
+> `log2(n)` = “The power to which 2 must be raised to get to n”.
+
+OR
+
+>  `log2(n)`= “How many times can we divide n by 2 to reach 1?”
+
+Binary Search **divides by 2 each time**, so it takes **log₂(n) steps**, not n steps.
+
+### 📊 **Growth Rate Understanding**
+
+| n (elements) | Linear Search Steps (O(n)) | Binary Search Steps (O(log n)) |
+| ------------ | -------------------------- | ------------------------------ |
+| 16           | 16                         | 4                              |
+| 1024         | 1024                       | 10                             |
+| 1,000,000    | 1,000,000                  | 20                             |
+
+🚀 Even for **1 million** elements, Binary Search uses only **20 steps!**
+
+### 🎤 **Interview Answer: Time Complexity of Binary Search**
+
+**Answer:**
+
+> “Binary Search works on a sorted array by repeatedly dividing the search space in half.  
+> In each step, it compares the target with the middle element and eliminates half of the elements.  
+> So, instead of checking all `n` elements like linear search, it reduces the problem size to `n/2`, then `n/4`, `n/8`, and so on.
+> 
+> We stop when the search space becomes 1.
+> 
+> Mathematically, this happens when:
+> 
+> n2k=1⇒k=log⁡2(n)\frac{n}{2^k} = 1 \Rightarrow k = \log_2(n)2kn​=1⇒k=log2​(n)
+> 
+> Therefore, the time complexity of Binary Search in the worst and average case is **O(log n)**, because it performs approximately `log₂(n)` comparisons.”
+
+---
