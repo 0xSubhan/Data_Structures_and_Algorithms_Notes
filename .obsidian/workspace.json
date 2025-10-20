@@ -48,9 +48,23 @@
               "icon": "lucide-file",
               "title": "Binary Search Complete"
             }
+          },
+          {
+            "id": "4444ce6cfba16fa5",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Data Structures/Stack - Complete With Questions.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Stack - Complete With Questions"
+            }
           }
         ],
-        "currentTab": 2
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -107,8 +121,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "right": {
     "id": "91da241c8eee8e44",
@@ -196,10 +209,11 @@
       "bases:Create new base": false
     }
   },
-  "active": "01b6da22d45a5079",
+  "active": "9c2c1d34019a4987",
   "lastOpenFiles": [
-    "Data Structures/Linked List Complete.md",
     "Data Structures/Binary Search Complete.md",
+    "Data Structures/Stack - Complete With Questions.md",
+    "Data Structures/Linked List Complete.md",
     "Data Structures/doubly_linked_list.cpp",
     "Data Structures/Arrays in C++.md",
     "Data Structures/Time & Space Complexity.md",
