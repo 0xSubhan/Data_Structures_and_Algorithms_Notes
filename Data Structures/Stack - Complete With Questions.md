@@ -394,3 +394,275 @@ int main()
 ```
 
 ---
+# Stack Applications: Reversing Strings and Linked Lists
+
+## Reversing a String Using a Stack
+
+A string, represented as a character array (e.g., "hello" in C-style with a null terminator), can be reversed using a stack. The process involves:
+
+1. **Pushing characters onto the stack**: Traverse the string from left to right, pushing each character onto a stack of characters. For "hello", 'H' is pushed first, then 'E', 'L', 'L', and finally 'O'.
+    
+2. **Popping characters to overwrite the string**: Once all characters are pushed, start from the beginning of the string (index 0). Pop the topmost character from the stack and place it at the current index. Continue this until the stack is empty. Since stacks operate on a Last-In, First-Out (LIFO) principle, characters are retrieved in reverse order of their insertion.
+    
+
+### Code Example (C++)
+
+The implementation in C++ involves creating a character array for the string. The user inputs a string, which is then passed to a `reverse` function along with its length. This `reverse` function utilizes the `std::stack` from the C++ Standard Template Library (STL).
+
+```cpp
+// Include stack header
+#include <stack>
+
+// Function signature for reverse
+void reverse(char* C, int n) {
+    std::stack<char> S; // Create a stack of characters
+
+    // Push characters onto stack
+    for (int i = 0; i < n; i++) {
+        S.push(C[i]);
+    }
+
+    // Pop characters to reverse the string
+    for (int i = 0; i < n; i++) {
+        C[i] = S.top(); // Get top element
+        S.pop();        // Pop top element
+    }
+}
+
+// Main function would handle user input, call reverse, and print
+// Example: char str[50]; printf("Enter a string: "); gets(str);
+// reverse(str, strlen(str)); printf("Reversed string: %s\n", str);
+```
+
+### Efficiency Analysis
+
+- **Time Complexity**: All stack operations (push, pop, top) take constant time, O(1). Both the pushing and popping loops run `n` times (where `n` is the string length). Since these loops are sequential, the total time complexity is O(n) + O(n) = O(n).
+    
+- **Space Complexity**: An auxiliary stack is used to store all `n` characters of the string. Therefore, the space complexity is O(n).
+    
+
+### Alternative: Efficient String Reversal (Without Extra Space)
+
+A more space-efficient approach for string reversal uses two pointers, `i` (start) and `j` (end). While `i` is less than `j`, swap the characters at `C[i]` and `C[j]`, then increment `i` and decrement `j`. This method has a space complexity of O(1) as it uses a constant amount of extra memory.
+
+## Reversing a Linked List Using a Stack
+
+Unlike arrays, linked list nodes are stored at disjoint memory locations, making direct access or two-pointer swapping difficult. Stacks provide a clear method for reversing linked lists.
+
+### Challenges with Linked Lists
+
+- Direct indexing like arrays is not possible.
+    
+- Previous reversal methods (iterative and recursive) have been discussed in this series.
+    
+    - Iterative: O(n) time, O(1) space.
+        
+    - Recursive: O(n) time, O(n) space (due to implicit call stack).
+        
+
+### Explicit Stack Method for Linked List Reversal
+
+This method uses an explicit stack of pointers to nodes (or node references):
+
+1. **Pushing node addresses onto the stack**: Traverse the linked list from the head. For each node, push its address (or a pointer to it) onto the stack. If nodes are at addresses 100, 150, 250, 300, these addresses would be pushed in that order.
+    
+2. **Rebuilding links by popping**: Once all node addresses are on the stack, the head of the linked list is set to the address of the node at the top of the stack (which was the last node in the original list). Then, in a loop:
+    
+    - Take the address from the top of the stack.
+        
+    - Set the `next` pointer of the current node (initially the new head) to this popped address.
+        
+    - Move to the newly linked node.
+        
+    - Pop the stack.
+        
+3. **Terminating the list**: After the loop, the `next` pointer of the last node (which was the first node in the original list) is set to `null`.
+    
+
+### Code Logic (Conceptual C++)
+
+Assuming `head` is a global `Node*` and `Node` has a `data` and `next` field:
+
+```cpp
+// Assuming Node structure and global Node* head
+
+void reverseLinkedListWithStack() {
+    if (head == nullptr) return; // Handle empty list
+
+    std::stack<Node*> S; // Stack to store node pointers
+    Node* temp = head;
+
+    // Push all node pointers onto the stack
+    while (temp != nullptr) {
+        S.push(temp);
+        temp = temp->next;
+    }
+
+    // Reconstruct the linked list
+    head = S.top(); // New head is the last node pushed
+    S.pop();
+    temp = head;
+
+    while (!S.empty()) {
+        temp->next = S.top(); // Link current node to the next one in reverse order
+        S.pop();
+        temp = temp->next; // Move to the newly linked node
+    }
+    temp->next = nullptr; // The last node (original first) now points to null
+}
+```
+
+### Efficiency Analysis
+
+- **Time Complexity**: Traversing the list to push nodes is O(n). Traversing the stack to rebuild links is also O(n). Total time complexity is O(n).
+    
+- **Space Complexity**: The stack stores `n` node pointers. Thus, the space complexity is O(n).
+    
+
+## Conclusion
+
+While a stack might not be the most space-efficient for string reversal, it simplifies the logic significantly for problems like linked list reversal and printing elements in reverse order. Understanding both explicit and implicit stack usage (as seen in recursion) is crucial for efficient programming.
+
+## My Code 
+
+```cpp
+    struct Node
+    {
+        int data;
+        Node* link;
+
+        Node(int val)
+            : data {val}
+            , link {nullptr}
+        {
+        }
+    };
+class STACK_LINK
+{
+private:
+
+    Node* top {nullptr}; // alternative of head 
+public:
+    void push(int val)
+    {
+        Node* newNode = {new Node(val)};
+        if (top == nullptr)
+        {
+            top = newNode;
+            return;
+        }
+        newNode->link = top;
+        top = newNode;
+    }
+    void pop()
+    {
+        if (top == nullptr)
+        {
+            return;
+        }
+        Node* temp = top;
+        top = top->link;
+        delete temp;
+    }
+    int Top() const
+    {
+        if (top == nullptr)
+        {
+            cout << "Linked List Is Empty So There is no top!" << endl;
+            return -1;
+        }
+        
+        return top->data;
+    } 
+    // Return Head Node:
+    Node*& getHead()
+    {
+        return top;
+    }
+    //
+    bool isEmpty()
+    {
+       return top == nullptr;
+    }
+    Node* getList()
+    {
+        return top;
+    }
+};
+void printList_linked(STACK_LINK& s)
+{
+    Node* temp = s.getList();
+    while (temp != nullptr)
+    {
+        cout << temp->data << " ";
+        temp = temp->link; 
+    }
+    cout << endl;
+}
+// Reverse String using stack:
+void Reverse_string(char* str,int n)
+{
+    stack<char> stk;
+
+    for (size_t i = 0; i < n; i++)
+    {
+        stk.push(str[i]);
+    }
+    for (size_t i = 0; i < n; i++)
+    {
+        str[i] = stk.top();
+        stk.pop();
+    }    
+}
+void getName(char* str)
+{
+    cout << "Enter Name: " ; cin >> str;
+}
+// Reversing Linked List using stack:
+void Reverse_list_UsingStack(Node*& head)
+{
+    if(head == nullptr) return;
+    stack<Node*> coll;
+    Node* temp = head;
+
+    while (temp != nullptr)
+    {
+        coll.push(temp);
+        temp = temp->link;
+    }
+    temp = coll.top(); head = temp;
+    coll.pop();
+    while (!coll.empty())
+    {
+        temp->link = coll.top();
+        coll.pop();
+        temp = temp->link;
+    }
+    temp->link = nullptr;
+    
+}
+int main()
+{
+    // Reversing C style string using stack:
+    char str[51];
+    getName(str);
+    Reverse_string(str,strlen(str));
+
+    for (size_t i = 0; i < strlen(str); i++)
+    {
+        cout << str[i];{}
+    }
+    
+    // Reversing Linked list using stack:
+    cout << "\nCurrent List: "; printList_linked(s2); // current List
+    Reverse_list_UsingStack(s2.getHead());
+    printList_linked(s2);
+    
+
+    cout << '\n';
+    return 0;
+
+}
+```
+
+---
