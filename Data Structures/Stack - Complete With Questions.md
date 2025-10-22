@@ -245,3 +245,152 @@ int main() {
 ```
 
 ---
+# Linked List Implementation of Stack
+
+### Time Complexity for Insertion and Deletion
+
+For a stack, push and pop operations must have a constant time complexity (O(1)).
+
+- **Inserting/Deleting at the end of a linked list (tail):** This operation has a time complexity of O(N) because it requires traversing the entire list to reach the last or second-to-last node. This is not suitable for stack operations.
+    
+- **Inserting/Deleting at the beginning of a linked list (head):** This operation has a constant time complexity of O(1). This makes it ideal for implementing stack operations.
+
+### Stack Implementation using Linked List
+
+To implement a stack using a linked list, we consistently perform insertions and deletions at the beginning of the list. The head of the linked list effectively becomes the "top" of the stack.
+
+### Node Structure
+
+In C, a node can be defined as a structure with two fields:
+
+- An integer to store the data.
+    
+- A pointer to another node, storing the address of the next node.
+    
+
+### Top Variable
+
+A pointer to a node, named `top`, is used to indicate the top of the stack. Initially, `top` is set to `NULL`, indicating an empty stack.
+
+### Push Operation
+
+1. **Create a new node:** Allocate memory for a new node using `malloc`.
+    
+2. **Set data:** Store the value to be pushed into the data field of the new node.
+    
+3. **Link to existing top:** Set the `next` pointer of the new node to point to the current `top`.
+    
+4. **Update top:** Set `top` to point to the newly created node. This effectively inserts the new node at the beginning of the list.
+    
+
+### Pop Operation
+
+1. **Check for empty stack:** If `top` is `NULL`, the stack is empty, and an error should be handled.
+    
+2. **Create a temporary pointer:** A temporary pointer (`temp`) is created and made to point to the current `top` node.
+    
+3. **Update top:** `top` is updated to point to the next node in the list (the node that was previously second in the list).
+    
+4. **Free memory:** The memory allocated to the node pointed to by `temp` (the original top node) is freed.
+    
+
+### Advantages of Linked List Implementation
+
+One significant advantage of a linked list-based stack over an array-based implementation is that it does not suffer from overflow issues, as long as the machine has available memory. It allocates memory dynamically as needed, making push and pop operations more efficient in terms of memory usage.
+
+```cpp
+// Link List Implementation of stack:
+    struct Node
+    {
+        int data;
+        Node* link;
+
+        Node(int val)
+            : data {val}
+            , link {nullptr}
+        {
+        }
+    };
+class STACK_LINK
+{
+private:
+
+    Node* top {nullptr}; // alternative of head 
+public:
+    void push(int val)
+    {
+        Node* newNode = {new Node(val)};
+        if (top == nullptr)
+        {
+            top = newNode;
+            return;
+        }
+        newNode->link = top;
+        top = newNode;
+    }
+    void pop()
+    {
+        if (top == nullptr)
+        {
+            return;
+        }
+        Node* temp = top;
+        top = top->link;
+        delete temp;
+    }
+    int Top() const
+    {
+        if (top == nullptr)
+        {
+            cout << "Linked List Is Empty So There is no top!" << endl;
+            return;
+        }
+        
+        return top->data;
+    } 
+    bool isEmpty()
+    {
+       return top == nullptr;
+    }
+    Node* getList()
+    {
+        return top;
+    }
+};
+void printList_linked(STACK_LINK& s)
+{
+    Node* temp = s.getList();
+    while (temp != nullptr)
+    {
+        cout << temp->data << " ";
+        temp = temp->link; 
+    }
+    cout << endl;
+}
+
+int main()
+{
+    // Linked list implementation of stack testing:
+    cout << "linked list implementation using stack: " << '\n';
+    STACK_LINK s2;
+    s2.push(5);
+    s2.push(4);
+    s2.push(3);
+    s2.push(2);
+    s2.push(1);
+
+    printList_linked(s2);
+
+    s2.pop();
+    printList_linked(s2);
+    cout << "Top: " <<  s2.Top() << endl;
+
+
+
+    cout << '\n';
+    return 0;
+	
+}
+```
+
+---
