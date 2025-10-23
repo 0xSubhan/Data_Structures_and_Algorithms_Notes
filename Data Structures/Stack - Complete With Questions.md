@@ -709,3 +709,189 @@ void Reverse_listDoubly(NodeD*& head)
 ```
 
 ---
+# Solving the Balanced Parentheses Problem with a Stack
+
+## Problem Description
+
+This lesson discusses a common programming interview question: checking for balanced parentheses in an expression. The expression is a string comprising constants, variables, operators, and various types of parentheses, including curly braces `{}` and square brackets `[]`.
+
+### Properties of Balanced Parentheses
+
+1. **Correct Nesting:** A closing parenthesis must correspond to a previously opened parenthesis of the same type.
+    
+2. **Order of Closure:** A parenthesis can only close if all parentheses opened _after_ it have already been closed. Essentially, "anything that is opened last should be closed first" within its nested scope.
+    
+3. **Last Unclosed Principle:** As the expression is scanned from left to right, any closer must correspond to the _last unclosed_ opening parenthesis.
+    
+
+## Solution Approach Using a Stack
+
+To solve this problem, we can use a stack data structure, which enforces a "last-in, first-out" (LIFO) behavior. This aligns perfectly with the "last unclosed first closed" principle of balanced parentheses.
+
+### Algorithm Steps:
+
+1. **Initialize an empty stack:** This stack will keep track of all opened but not yet closed parentheses.
+    
+2. **Scan the expression from left to right:** Process each character in the string.
+    
+    - **If an opening symbol is encountered** (e.g., `(`, `{`, `[`):
+        
+        - Push it onto the stack.
+            
+    - **If a closing symbol is encountered** (e.g., `)`, `}`, `]`):
+        
+        - **Check for an empty stack:** If the stack is empty, it means there's no corresponding opening parenthesis for the current closing symbol. The expression is unbalanced, so return `false`.
+            
+        - **Check the top of the stack:** Compare the current closing symbol with the top element of the stack. If they form a matching pair (e.g., `)` matches `(`, `}` matches `{`, `]` matches `[`):
+            
+            - Pop the top element from the stack (as it has found its counterpart).
+                
+        - **If no match:** If the top of the stack does not match the closing symbol (e.g., a `)` tries to close a `{` or `[`), the expression is unbalanced. Return `false`.
+            
+3. **After scanning the entire expression:**
+    
+    - **Check if the stack is empty:** If the stack is empty, it means every opening parenthesis found its corresponding closing counterpart, and the expression is balanced. Return `true`.
+        
+    - **If the stack is not empty:** It means there are unclosed opening parentheses, and the expression is unbalanced. Return `false`.
+        
+
+## Pseudocode Example
+
+```pseudocode
+function checkBalancedParenthesis(expression):
+  // Store the number of characters in the string
+  num_chars = length(expression)
+
+  // Create an empty stack of characters
+  stack = new Stack()
+
+  // Scan the expression from left to right
+  for i from 0 to num_chars - 1:
+    char = expression[i]
+
+    // If it's an opening symbol
+    if char is '(', '{', or '[':
+      stack.push(char)
+    // If it's a closing symbol
+    else if char is ')', '}', or ']':
+      // Scenario 1: Stack is empty (no opening counterpart)
+      if stack.isEmpty():
+        return false
+
+      // Scenario 2: Top of stack doesn't pair with closing symbol
+      top_char = stack.top()
+      if (char == ')' and top_char != '(') or \
+         (char == '}' and top_char != '{') or \
+         (char == ']' and top_char != '['):
+        return false
+
+      // Scenario 3: Match found, pop from stack
+      else:
+        stack.pop()
+
+  // After scanning, check if the stack is empty
+  if stack.isEmpty():
+    return true // All parentheses balanced
+  else:
+    return false // Unbalanced parentheses
+```
+
+## Example Walkthroughs
+
+### Example 1: `)` (Unbalanced - Closing without opening)
+
+1. Scan `)`. Stack is empty.
+    
+2. Encounter `)`. Stack is empty, so `return false`.
+    
+
+### Example 2: `[{)]` (Unbalanced - Mismatched pair)
+
+1. Scan `[`. Push `[` onto stack. Stack: `[`
+    
+2. Scan `{`. Push `{` onto stack. Stack: `[`, `{`
+    
+3. Scan `(`. Push `(` onto stack. Stack: `[`, `{`, `(`
+    
+4. Scan `]`. Top of stack is `(`. `]` does not pair with `(`. `return false`.
+    
+
+### Example 3: `({()})` (Balanced)
+
+1. Scan `(`. Push `(`. Stack: `(`
+    
+2. Scan `{`. Push `{`. Stack: `(`, `{`
+    
+3. Scan `(`. Push `(`. Stack: `(`, `{`, `(`
+    
+4. Scan `)`. Top of stack is `(`. They pair. Pop `(`. Stack: `(`, `{`
+    
+5. Scan `)`. Top of stack is `{`. They don't pair. Oh, wait, in the audio, this example was `({()})`. Let's re-evaluate.
+    
+    - Scan `(`. Push `(`. Stack: `(`
+        
+    - Scan `{`. Push `{`. Stack: `(`, `{`
+        
+    - Scan `(`. Push `(`. Stack: `(`, `{`, `(`
+        
+    - Scan `)`. Top of stack is `(`. Pairs. Pop `(`. Stack: `(`, `{`
+        
+    - Scan `}`. Top of stack is `{`. Pairs. Pop `{`. Stack: `(`
+        
+    - Scan `)`. Top of stack is `(`. Pairs. Pop `(`. Stack: `[]` (empty)
+        
+6. End of expression. Stack is empty. `return true`.
+
+### My code (Implementation)
+
+```cpp
+// Solving the Balanced Parentheses Problem with a Stack:
+bool pseudocodecheckBalancedParenthesis(string& expr)
+{
+    stack<char> s;
+    
+    for (size_t i = 0; i < expr.length(); i++)
+    {
+        if (expr[i] == '{' || expr[i] == '(' || expr[i] == '[')
+        {
+            s.push(expr[i]);
+        }
+        else if(expr[i] == '}' || expr[i] == ']' || expr[i] == ')')
+        {
+            if (s.empty())
+            {
+                return false;
+            }
+
+            // Checking for corresponding:
+            if (expr[i] == ')' && s.top() == '(' || expr[i] == '}' && s.top() == '{' || expr[i] == ']' && s.top() == '[')
+            {
+                s.pop();
+            }
+            else
+                return false; // meaning it is unbalanced!
+            
+        }
+    }
+    return s.empty();    
+}
+int main()
+{
+    // pseudocodecheckBalancedParenthesis Implementation:
+    string expr = "{[()]}";
+
+    if (pseudocodecheckBalancedParenthesis(expr))
+    {
+        cout << "\nExpression is balanced!" << endl;
+    }
+    else
+        cout << "\nExpression is not balanced!" << endl;
+    
+
+    cout << '\n';
+    return 0;
+
+}
+```
+
+---
