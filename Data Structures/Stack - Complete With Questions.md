@@ -665,4 +665,47 @@ int main()
 }
 ```
 
+```cpp
+// Reversing a doubly linked list using a stack:
+    struct NodeD
+    {
+        int data;
+        NodeD* prev;
+        NodeD* next;
+
+        NodeD(int val)
+            : data {val}
+            , prev {nullptr}
+            , next {nullptr}
+        {
+        }        
+    };
+
+void Reverse_listDoubly(NodeD*& head)
+{
+    if(head == nullptr) return;
+    stack<NodeD*> s;
+    NodeD* temp = head;
+    
+    while (temp != nullptr)
+    {
+        s.push(temp);
+        temp = temp->next; 
+    }
+    // Setting last node as head:
+    head = s.top();
+    s.pop();
+    temp = head;
+    // Handling case for other nodes:
+    while (!s.empty())
+    {
+        temp->next = s.top();
+        s.top()->prev = temp;
+        temp = temp->next;
+        s.pop();
+    }
+    temp->next = nullptr;    
+}
+```
+
 ---
