@@ -895,3 +895,205 @@ int main()
 ```
 
 ---
+# Infix , prefix and postfix
+
+## Introduction to Expression Evaluation
+
+This lesson introduces the important computer science topic of evaluating arithmetic and logical expressions, focusing on how expressions are written and processed. Expressions typically consist of constants, variables, operators, and parentheses, arranged according to specific grammatical rules.
+
+## Infix Notation
+
+Most commonly, expressions are written in _infix notation_, where an operator is placed between two operands. An operand can be a constant, a variable, or even another expression. For example, in "2 + 3", 2 and 3 are operands and '+' is the operator. Similarly, in "(P + Q) * (R + S)", both (P+Q) and (R+S) are operands for the multiplication operator.
+
+Throughout this lesson, the focus will be on _binary operators_, which require exactly two operands.
+
+### Rules for Evaluating Infix Expressions
+
+Evaluating infix expressions, especially those with multiple operators and no parentheses, requires specific rules to resolve ambiguity. Consider the expression "4 + 6 * 2":
+
+- If addition is performed first, the result is (4 + 6) * 2 = 20.
+    
+- If multiplication is performed first, the result is 4 + (6 * 2) = 16.
+    
+
+To resolve such ambiguities, _operator precedence rules_ are followed, similar to those in high school mathematics (PEMDAS/BODMAS):
+
+1. **Parentheses/Brackets**: Highest precedence.
+    
+2. **Exponents**: Applied from right to left (right-associative).
+    
+    - Example: `2^3^2` is `2^(3^2)` = `2^9` = `512`.
+        
+3. **Multiplication and Division**: Applied from left to right (left-associative).
+    
+4. **Addition and Subtraction**: Applied from left to right (left-associative).
+    
+
+_Operator associativity_ determines the order of operations for operators with equal precedence (e.g., left-to-right for multiplication/division and addition/subtraction, right-to-left for exponents).
+
+Parentheses are crucial in infix notation because they explicitly dictate the order of operations, overriding default precedence and associativity, and improving readability.
+
+## Limitations of Infix Notation
+
+Despite its common use and human readability, infix notation can be challenging for machines to parse and evaluate unambiguously without complex rules like operator precedence and associativity. This complexity led to the development of alternative notations.
+
+## Prefix Notation (Polish Notation)
+
+Proposed by a Polish logician in 1924, _prefix notation_ (or Polish notation) places the operator _before_ its operands. This notation is parenthesis-free and eliminates ambiguity related to operator precedence and associativity.
+
+- Infix: `2 + 3` -> Prefix: `+ 2 3`
+    
+- Infix: `P - Q` -> Prefix: `- P Q`
+    
+- Infix: `A + B * C` -> Prefix: `+ A * B C`
+    
+
+In prefix notation, an operand can be a constant, a variable, or another prefix expression. The key advantage is that each operand is unambiguously associated with only one operator, simplifying parsing.
+
+## Postfix Notation (Reverse Polish Notation)
+
+_Postfix notation_ (or Reverse Polish Notation), developed in the 1950s by computer scientists, places the operator _after_ its operands. This syntax is highly favored for machine computation due to its straightforward parsing and evaluation, requiring minimal time and memory.
+
+- Infix: `2 + 3` -> Postfix: `2 3 +` (operands can be separated by spaces or delimiters)
+    
+- Infix: `P - Q` -> Postfix: `P Q -`
+    
+- Infix: `A + B * C` -> Postfix: `A B C * +`
+    
+
+Similar to prefix notation, postfix expressions are parenthesis-free and avoid the ambiguities of infix notation. Operands can be constants, variables, or other postfix expressions.
+
+## Manual Conversion from Infix to Prefix/Postfix
+
+To convert an infix expression to prefix or postfix manually, one must follow the order of operations (precedence and associativity) as if evaluating the expression, converting the innermost or highest-precedence operations first. Temporary parentheses can be used to visualize the order of conversion.
+
+**Example: Infix** `A + B * C` **to Prefix**
+
+1. Prioritize `B * C`: `A + (* B C)`
+    
+2. Prioritize `A + (...)`: `+ A (* B C)` -> Result: `+ A * B C`
+    
+
+**Example: Infix** `A + B * C` **to Postfix**
+
+1. Prioritize `B * C`: `A + (B C *)`
+    
+2. Prioritize `A + (...)`: `A (B C *) +` -> Result: `A B C * +`
+    
+
+While parentheses enhance human readability in infix expressions, they are unnecessary for prefix and postfix notations, making them more memory-efficient for machines.
+
+## Conclusion
+
+Infix, prefix, and postfix notations offer different ways to represent expressions. While infix is common for human interaction, prefix and postfix notations are more efficient and unambiguous for computational evaluation, especially with the use of stack data structures. The next lesson will cover the evaluation of prefix and postfix notations.
+
+## why prefix or postfix notation is used instead of infix in cs
+
+### 🧩 1. The Problem with Infix Notation
+
+In **infix notation**, the operator is written **between** operands — like in normal math:
+
+```css
+A + B * C
+```
+
+But here, **ambiguity arises** — should you do addition first or multiplication first?  
+Humans rely on **operator precedence** and **parentheses** to understand the order:
+
+```css
+A + (B * C)
+```
+
+Computers, however, do **not naturally understand precedence** or parentheses without extra logic.  
+So, parsing infix expressions requires:
+
+- Handling **operator precedence** (`*` > `+`)
+    
+- Handling **associativity** (`a - b - c` means `(a - b) - c`)
+    
+- Handling **parentheses**
+    
+
+This makes **compilers and interpreters** more complex.
+
+### ⚙️ 2. Why Prefix and Postfix Are Better
+
+In **prefix** (Polish) and **postfix** (Reverse Polish) notation,  
+the order of operations is **encoded directly by the position of operators**,  
+so **no parentheses or precedence rules** are needed.
+
+#### Example
+
+Expression:
+
+```css
+A + B * C
+```
+
+|Form|Notation|Evaluation Order|
+|---|---|---|
+|Infix|`A + B * C`|ambiguous (need rules)|
+|Prefix|`+ A * B C`|do `* B C` first, then `+ A`|
+|Postfix|`A B C * +`|do `B C *` first, then `A +`|
+
+Thus, **prefix/postfix** eliminates ambiguity entirely.
+
+### 💡 3. Advantages for Computers
+
+✅ **No need for parentheses** — structure is implicit  
+✅ **Easier parsing** — can be processed with simple stacks  
+✅ **Efficient evaluation** — especially for interpreters and compilers
+
+For example, postfix (Reverse Polish Notation) can be evaluated using a **stack**:
+
+1. Read tokens left to right.
+    
+2. Push operands on stack.
+    
+3. When operator appears, pop operands, apply operation, and push result back.
+
+### 🔢 4. Example of Postfix Evaluation
+
+Infix:
+
+```css
+(3 + 4) * 5
+```
+
+Postfix:
+
+```css
+3 4 + 5 *
+```
+
+Evaluation using stack:
+
+|Step|Stack|Action|
+|---|---|---|
+|Read 3|[3]|push 3|
+|Read 4|[3, 4]|push 4|
+|Read +|[7]|pop 3, 4 → 3+4=7|
+|Read 5|[7, 5]|push 5|
+|Read *|[35]|pop 7, 5 → 7*5=35|
+
+Result = **35**
+
+### 🧠 5. In Practice
+
+- **Compilers** internally convert infix expressions into **postfix** or **prefix** form before evaluation or code generation.
+    
+- **Stack-based architectures** (like the Java Virtual Machine) use postfix-style evaluation.
+    
+- **Expression trees** in compilers or interpreters also naturally align with prefix/postfix traversal.
+
+### 🏁 Summary
+
+|Aspect|Infix|Prefix/Postfix|
+|---|---|---|
+|Human readability|High|Low|
+|Computer readability|Complex|Easy|
+|Needs parentheses|Yes|No|
+|Parsing difficulty|High|Low|
+|Evaluation mechanism|Requires precedence rules|Simple stack-based|
+
+---
