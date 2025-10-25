@@ -1097,3 +1097,221 @@ Result = **35**
 |Evaluation mechanism|Requires precedence rules|Simple stack-based|
 
 ---
+# Evaluating Prefix and Postfix Expressions
+
+## Introduction to Prefix and Postfix Evaluation
+
+This lesson focuses on evaluating prefix and postfix expressions. While both evaluation algorithms are similar, postfix evaluation is discussed first due to its easier understanding and implementation. The lesson then proceeds to explain prefix evaluation. The main tool for these evaluations is a stack.
+
+## Postfix Expression Evaluation
+
+### Manual Evaluation of Postfix Expressions
+
+To manually evaluate a postfix expression, scan it from left to right. Identify the first occurrence of an `operand, operand, operator` pattern. Apply the operator to the two preceding operands and reduce the expression. Repeat this process until all operators are resolved, and the expression is reduced to a single value.
+
+### Programmatic Evaluation of Postfix Expressions using a Stack
+
+When evaluating postfix expressions programmatically (e.g., from a string where operands and operators are space-separated), a stack data structure is highly efficient. The process involves a single pass through the expression:
+
+1. **Scan from left to right:** Process each token (operand or operator).
+    
+2. **If a token is an operand:** Push it onto the stack.
+    
+3. **If a token is an operator:**
+    
+    - Pop the top two elements from the stack. The first popped element is the second operand (`OP2`), and the second popped element is the first operand (`OP1`).
+        
+    - Perform the operation (e.g., `OP1 operator OP2`).
+        
+    - Push the result back onto the stack.
+        
+4. **Final Result:** After scanning the entire expression, the single remaining element on the stack is the final result.
+    
+
+This method leverages the Last-In, First-Out (LIFO) nature of a stack, which naturally handles the order of operations in postfix notation.
+
+## Prefix Expression Evaluation
+
+### Manual Evaluation of Prefix Expressions
+
+Similar to postfix, prefix expressions can be evaluated manually. The key difference is scanning the expression from right to left.
+
+### Programmatic Evaluation of Prefix Expressions using a Stack
+
+Evaluating prefix expressions programmatically also uses a stack, but with a reversed scanning direction and operand order:
+
+1. **Scan from right to left:** Process each token.
+    
+2. **If a token is an operand:** Push it onto the stack.
+    
+3. **If a token is an operator:**
+    
+    - Pop the top two elements from the stack. This time, the first popped element is the first operand (`OP1`), and the second popped element is the second operand (`OP2`). This order is crucial, especially for non-commutative operations like subtraction or division.
+        
+    - Perform the operation (e.g., `OP1 operator OP2`).
+        
+    - Push the result back onto the stack.
+        
+4. **Final Result:** The single element remaining on the stack after processing is the final answer.
+
+>Computers find **infix notation hard to evaluate** directly because they need to keep track of **operator precedence** (like `*` before `+`) and **parentheses**.
+
+**Prefix and Postfix** eliminate these ambiguities —  
+no parentheses are needed, and order of operations is **completely determined by position**.
+
+## 💡 Evaluating Postfix Expressions
+
+Now suppose:
+
+```cpp
+A=2, B=3, C=5, D=4, E=9
+```
+
+Then postfix becomes:
+
+```cpp
+2 3 * 5 4 * + 9 -
+```
+
+### Algorithm (Step-by-step manual method)
+
+1. **Scan from left → right**
+    
+2. When you see an **operand (number)** → **push it** onto a stack.
+    
+3. When you see an **operator** → **pop two operands**, perform the operation, then **push the result** back.
+
+### Example Walkthrough
+
+|Step|Symbol|Action|Stack (top at right)|
+|---|---|---|---|
+|1|`2`|Operand → push|`[2]`|
+|2|`3`|Operand → push|`[2, 3]`|
+|3|`*`|Pop 3,2 → 2×3=6 → push 6|`[6]`|
+|4|`5`|Operand → push|`[6, 5]`|
+|5|`4`|Operand → push|`[6, 5, 4]`|
+|6|`*`|Pop 4,5 → 5×4=20 → push 20|`[6, 20]`|
+|7|`+`|Pop 20,6 → 6+20=26 → push 26|`[26]`|
+|8|`9`|Operand → push|`[26, 9]`|
+|9|`-`|Pop 9,26 → 26−9=17 → push 17|`[17]`|
+
+✅ **Final Answer:** `17`
+
+### 🧠 Why the Stack Works
+
+- The **stack** stores the most recent operands.
+    
+- When an operator appears, it’s always applied to the **two most recent operands**.
+    
+- That’s why the **Last In, First Out (LIFO)** behavior fits perfectly.
+
+## 🧰 Pseudocode for Postfix Evaluation
+
+```cpp
+function evaluatePostfix(expression):
+    create empty stack S
+
+    for each token in expression:
+        if token is operand:
+            S.push(token)
+        else if token is operator:
+            op2 = S.pop()
+            op1 = S.pop()
+            result = applyOperator(op1, op2, token)
+            S.push(result)
+
+    return S.top()  // final answer
+```
+
+### My Code
+
+```cpp
+// Using stack to evaulate postfix expression:
+int evaluatePostfix(const string& expr)
+{
+    stack<int> s;
+
+    for(char ch : expr)
+    {
+        if (ch != '+' && ch != '-' && ch != '*' && ch != '/')
+        {
+            int tempConverter = ch - '0';
+            s.push(tempConverter);
+        }
+        else
+        {
+            int operand2 = s.top();
+            s.pop();
+            int operand1 = s.top(); 
+            s.pop();
+
+            int result = 0;
+            switch (ch)
+            {
+            case '+':
+                s.push(result = operand1+operand2);
+                break;
+            case '-':
+                s.push(result = operand1-operand2);
+                break;
+            case '*':
+                s.push(result = operand1*operand2);
+                break;
+            case '/':
+                s.push(result = operand1/operand2);
+                break;            
+            }
+        }
+        
+    } 
+    return s.top();
+} 
+// Using stack to evaulate prefix expression:
+int evaluatePrefix(const string& expr)
+{
+    stack<int> s;
+
+    for(int i = static_cast<int>(expr.length()-1); i >= 0; i--)
+    {
+        char ch = expr[i]; 
+        if (ch != '+' && ch != '-' && ch != '*' && ch != '/')
+        {
+            int tempConverter = ch - '0';
+            s.push(tempConverter);
+        }
+        else
+        {
+            int operand1 = s.top(); 
+            s.pop();
+            int operand2 = s.top();
+            s.pop();
+
+            int result = 0;
+            switch (ch)
+            {
+            case '+':
+                s.push(result = operand1+operand2);
+                break;
+            case '-':
+                s.push(result = operand1-operand2);
+                break;
+            case '*':
+                s.push(result = operand1*operand2);
+                break;
+            case '/':
+                if (operand2 == 0)
+                {
+                    cerr << "Error: division by zero in prefix expression\n";
+                    return 0;
+                }            
+                s.push(result = operand1/operand2);
+                break;            
+            }
+        }
+        
+    } 
+    return s.top();
+} 
+```
+
+---
