@@ -1315,3 +1315,436 @@ int evaluatePrefix(const string& expr)
 ```
 
 ---
+# Infix to Postfix
+
+
+## 🧩 What Is Infix, Postfix, and Why Convert?
+
+- **Infix notation:** Operators are written _between_ operands — e.g.,  
+    `A + B * C`
+    
+- **Postfix notation (Reverse Polish Notation):** Operators come _after_ operands — e.g.,  
+    `A B C * +`
+    
+
+Computers find **postfix** much easier to evaluate because **no parentheses** or **operator precedence rules** are needed at runtime.  
+The evaluation can be done **strictly left to right** using a stack.
+
+## ⚙️ Manual Conversion Intuition
+
+Let’s understand this using the example:
+
+```cpp
+A + (B * C)
+```
+
+1. The inner expression `(B * C)` becomes → `B C *`
+    
+2. Replace the inner expression back: `A + (B C *)`
+    
+3. Now place `+` after its operands: `A B C * +`
+    
+
+✅ **Result:** `A B C * +`
+
+This is what you’d do manually using your knowledge of **operator precedence** (`*` before `+`) and **associativity** (left to right for most operators).
+
+But this becomes tedious when dealing with expressions like:  
+`A + B * (C ^ D - E) ^ (F + G * H) - I`
+
+That’s why we need a **systematic algorithm**.
+
+## ⚡ Efficient Algorithm: One Left-to-Right Pass
+
+The algorithm scans the infix expression **once**, using a **stack** to handle operators.
+
+### Key Observation:
+
+- **Operands** keep their order (e.g., `A`, `B`, `C` stay `A`, `B`, `C`).
+    
+- Only **operators** move around depending on their precedence and parentheses.
+    
+
+So we can safely append operands directly to the output (postfix) as we read them.
+
+## 🧱 Using a Stack: Why and How
+
+The **stack** temporarily holds operators (and parentheses).
+
+Let’s break down how tokens (characters) are processed:
+
+### 1️⃣ If token is an **operand** (`A`, `B`, `C`):
+
+➡️ Directly add it to the postfix string.  
+Because operands’ order never changes.
+
+Example:
+
+```cpp
+Input: A
+Postfix: A
+```
+
+### 2️⃣ If token is an **operator** (`+`, `-`, `*`, `/`, `^`):
+
+You **cannot** append it directly yet — because you might still see its **right operand** later.
+
+Instead:
+
+- Compare its **precedence** with the **top of the stack**.
+    
+- Use the rules below.
+    
+
+#### Operator Precedence:
+
+|Operator|Precedence|Associativity|
+|---|---|---|
+|`^` (power)|highest|right-to-left|
+|`*`, `/`|medium|left-to-right|
+|`+`, `-`|lowest|left-to-right|
+
+#### Rules:
+
+- If stack top has **higher or equal precedence** (and same associativity), pop it and append it to the postfix.
+    
+- Then push the current operator.
+    
+
+This ensures that operators are placed in postfix order based on their execution priority.
+
+### 3️⃣ **Parentheses Handling**
+
+Parentheses change the natural precedence of operators, so special handling is needed.
+
+#### (a) If token is `(`:
+
+Push it onto the stack.  
+It marks a **boundary** — operators before this should not interfere with operators inside.
+
+#### (b) If token is `)`:
+
+Pop operators and append to postfix **until** an opening parenthesis `(` is found.  
+Then pop and discard that `(`.
+
+This ensures that subexpressions inside parentheses are processed as one independent group.
+
+## 🧮 Example: `A + B * C - D`
+
+Let’s go step by step:
+
+|Token|Action|Stack|Postfix|
+|---|---|---|---|
+|`A`|Operand → append|—|`A`|
+|`+`|Stack empty → push `+`|`+`|`A`|
+|`B`|Operand → append|`+`|`A B`|
+|`*`|`*` has **higher** precedence than `+` → push `*`|`+, *`|`A B`|
+|`C`|Operand → append|`+, *`|`A B C`|
+|`-`|`-` has **lower** precedence than `*`, so pop `*` → postfix: `A B C *`  <br>Then `-` has **equal** precedence as `+`, pop `+` → postfix: `A B C * +`  <br>Push `-`|`-`|`A B C * +`|
+|`D`|Operand → append|`-`|`A B C * + D`|
+
+Now end of expression:  
+Pop remaining operators → `A B C * + D -`
+
+✅ **Final Postfix:** `A B C * + D -`
+
+## 🧠 Algorithm Behavior Summary
+
+This algorithm effectively:
+
+- **Preserves operand order**
+    
+- **Reorders operators** using the stack
+    
+- **Respects parentheses and precedence**
+
+## 🧰 Full Algorithm (Pseudocode)
+
+```cpp
+function infixToPostfix(expression):
+    stack S
+    string result = ""
+
+    for each char in expression:
+        if isOperand(char):
+            result += char
+
+        else if char == '(':
+            S.push(char)
+
+        else if char == ')':
+            while S.top() != '(':
+                result += S.top()
+                S.pop()
+            S.pop()  # remove '('
+
+        else if isOperator(char):
+            while S not empty and S.top() != '(' and hasHigherPrecedence(S.top(), char):
+                result += S.top()
+                S.pop()
+            S.push(char)
+
+    # After scanning all characters
+    while S not empty:
+        result += S.top()
+        S.pop()
+
+    return result
+```
+
+### Helper Functions:
+
+- `isOperand(ch)` → checks if ch is A-Z, a-z, 0-9
+    
+- `isOperator(ch)` → checks if ch is `+`, `-`, `*`, `/`, `^`
+    
+- `hasHigherPrecedence(op1, op2)` → compares their precedence
+    
+- Associativity rules:
+    
+    - Left-to-right: pop when equal or higher precedence (`+ - * /`)
+        
+    - Right-to-left: pop only when higher precedence (`^`)
+
+## 🧾 Example Walkthrough with Parentheses
+
+Expression:
+
+```
+(A + B) * C
+```
+
+|Token|Action|Stack|Postfix|
+|---|---|---|---|
+|`(`|push|`(`||
+|`A`|operand → append|`(`|`A`|
+|`+`|push|`( +`|`A`|
+|`B`|operand → append|`( +`|`A B`|
+|`)`|pop until `(` → append `+`|(removed)|`A B +`|
+|`*`|push|`*`|`A B +`|
+|`C`|operand → append|`*`|`A B + C`|
+
+Now pop remaining operators → `*`
+
+✅ **Final Postfix:** `A B + C *`
+
+## 🧩 Summary Table
+
+|Infix|Postfix|Explanation|
+|---|---|---|
+|`A + B`|`A B +`|Simple addition|
+|`A + B * C`|`A B C * +`|`*` has higher precedence|
+|`(A + B) * C`|`A B + C *`|Parentheses first|
+|`A + (B * C - D)`|`A B C * D - +`|Inner evaluated first|
+## 🧠 Why It’s Efficient
+
+- Only **one scan** over the infix expression.
+    
+- Stack ensures **O(n)** time complexity.
+    
+- No recursive parsing or re-evaluation required.
+
+## 💭 The Core Problem
+
+In infix expressions (like `A + B * C`),  
+the **order of execution** depends on **operator precedence** and **associativity**.
+
+- Precedence: `*` executes before `+`
+    
+- Associativity: If two operators have the same precedence, we execute **left-to-right** (for `+`, `-`, `*`, `/`)  
+    or **right-to-left** (for `^`).
+    
+
+But in postfix, the **order of operators in the expression directly defines** the order of execution.  
+So, we must ensure operators appear in postfix **in the same order they would be executed** in infix.
+
+## ⚙️ What the Stack Represents
+
+When we convert infix → postfix, the **stack** temporarily holds operators we haven’t placed yet.
+
+The **stack top** always holds the **most recent unprocessed operator**.  
+Before pushing a new operator, we must check if any operator **already waiting on the stack** should go **before** the new one in postfix order.
+
+That’s why we compare **precedence** and **associativity**.
+
+## 🔍 Let’s Understand with an Example
+
+### Example 1: `A + B * C`
+
+|Step|Token|Stack|Postfix|Explanation|
+|---|---|---|---|---|
+|1|`A`|—|`A`|Operand → append|
+|2|`+`|`+`|`A`|Stack empty → push `+`|
+|3|`B`|`+`|`A B`|Operand → append|
+|4|`*`|`+, *`|`A B`|Check: `*` (current) has **higher precedence** than `+` (top), so keep `+` — push `*`|
+|5|`C`|`+, *`|`A B C`|Operand → append|
+
+End of expression → pop all →  
+`A B C * +`
+
+✅ Correct postfix.
+
+**Logic:**  
+We did _not_ pop `+` because `*` should execute before `+`.  
+`*` had **higher precedence**, so we allowed it to go on top.
+
+### Example 2: `A * B + C`
+
+|Step|Token|Stack|Postfix|Explanation|
+|---|---|---|---|---|
+|1|`A`|—|`A`|Operand|
+|2|`*`|`*`|`A`|Push `*`|
+|3|`B`|`*`|`A B`|Operand|
+|4|`+`|`*` → (pop) → push `+`|`A B *`|When `+` comes, stack top `*` has **higher precedence**, so we **pop it first** before pushing `+`|
+|5|`C`|`+`|`A B * C`|Operand|
+|6|end|—|`A B * C +`|Pop remaining|
+
+✅ Correct postfix.
+
+**Logic:**  
+When `+` arrived, `*` was waiting in stack.  
+Since `*` must execute **before** `+`, it should appear **first** in postfix.  
+So we pop it and append it before pushing `+`.
+
+This is what that rule enforces:
+
+> “If stack top has higher (or equal, for left-associative) precedence → pop it.”
+
+## ⚖️ Equal Precedence Case (Associativity)
+
+Now let’s see why “**equal precedence and same associativity**” matters.
+
+### Example 3: `A - B + C`
+
+Both `-` and `+` have **equal precedence** and **left-to-right** associativity.
+
+|Step|Token|Stack|Postfix|Explanation|
+|---|---|---|---|---|
+|1|`A`|—|`A`|Operand|
+|2|`-`|`-`|`A`|Push `-`|
+|3|`B`|`-`|`A B`|Operand|
+|4|`+`|`-` → pop → push `+`|`A B -`|Since `+` and `-` have equal precedence **and left associativity**, we pop the earlier one before pushing the new one|
+|5|`C`|`+`|`A B - C`|Operand|
+|end|—|—|`A B - C +`|Pop remaining|
+
+✅ Correct postfix.
+
+**Why pop?**  
+Because in infix, when two same-precedence operators appear,  
+the one **on the left executes first** (left-associative).  
+Popping the earlier operator ensures it appears first in postfix.
+
+### Example 4: Right-Associative Operator `^`
+
+Expression:  
+`A ^ B ^ C`
+
+Both `^` have **equal precedence**, but **right-to-left** associativity.
+
+|Step|Token|Stack|Postfix|
+|---|---|---|---|
+|`A`|—|`A`||
+|`^`|`^`|`A`||
+|`B`|`^`|`A B`||
+|`^`|(do **not** pop first `^`) push new `^`|`A B`||
+|`C`|`^, ^`|`A B C`||
+
+Then pop → `A B C ^ ^`
+
+✅ Correct postfix.
+
+**Logic:**  
+For right-associative operators, we **don’t pop** when precedence is equal,  
+because the operator on the **right** executes **first**.  
+We only pop when the stack top has _higher_ precedence, not equal.
+
+That’s why the rule says:
+
+> “If stack top has higher or equal precedence **and same associativity**, pop it.”
+
+## 🧠 In Summary
+
+| Case                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | Stack Top  | Current Operator | Action                        | Reason |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- | ---------------- | ----------------------------- | ------ |
+| Higher precedence                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | `*` vs `+` | pop              | `*` must execute before `+`   |        |
+| Equal precedence (left-associative)                                                                                                                                                                                                                                                                                                                                                                                                                                                     | `+` vs `-` | pop              | left one executes first       |        |
+| Equal precedence (right-associative)                                                                                                                                                                                                                                                                                                                                                                                                                                                    | `^` vs `^` | do **not** pop   | right one executes first      |        |
+| ### 🧩 So the Logic Is:<br><br>When we see a new operator:<br><br>1. If there’s an operator already waiting on the stack that must execute **before** the current one (based on precedence or associativity),  <br>    → **pop it first** (append to postfix).<br>    <br>2. Then push the current operator.<br>    <br><br>That simple rule ensures the **final postfix expression represents the correct order of execution** for all possible operator combinations.Lower precedence | `+` vs `*` | don’t pop        | current has higher precedence |        |
+
+## My Implmentation Code
+
+```cpp
+// Infix to postfix conversion algorithm:
+bool isOperand(char ch)
+{
+    if (ch >= 'A' && ch <= 'Z' || ch >= 'a' && ch <= 'z' )
+        return true;
+    else 
+        return false;    
+} 
+bool isOperator(char ch)
+{
+    if (ch != '+' &&ch != '-' &&ch != '*' &&ch != '/'&&ch != '^')
+    {
+        return false;
+    }
+    else
+        return true;
+}
+int precedence(char op)
+{
+    if (op == '^') return 3;
+    if (op == '*' || op == '/') return 2;
+    if (op == '+' || op == '-') return 1;
+    return 0; // for non-operators
+}
+
+bool hasHigherPrecedence(char top, char current)
+{
+    // Handle right-associativity of '^'
+    if (top == '^' && current == '^')
+        return false;
+
+    return precedence(top) >= precedence(current);
+}
+string infixToPostfix(string& expr)
+{
+    string result = "";
+    stack<char> s; 
+
+    for(char ch : expr)
+    {
+        if (isOperand(ch))
+            result += ch;
+        else if(ch == '(')
+            s.push(ch);
+        else if(ch == ')')
+        {
+            while (s.top() != '(')
+            {
+                result += s.top();
+                s.pop();
+            }
+            s.pop();
+        }    
+        else if(isOperator(ch))
+        {
+            while(!s.empty() && s.top() != '(' && hasHigherPrecedence(s.top(),ch))
+            {
+                result += s.top();
+                s.pop();
+            }
+            s.push(ch);
+        }
+    }
+    while (!s.empty())
+    {
+        result += s.top();
+        s.pop(); 
+    }
+    return result;
+} 
+```
+
+
+---
