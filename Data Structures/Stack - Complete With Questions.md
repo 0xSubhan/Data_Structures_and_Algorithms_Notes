@@ -1671,7 +1671,7 @@ That’s why the rule says:
 | Equal precedence (right-associative)                                                                                                                                                                                                                                                                                                                                                                                                                                                    | `^` vs `^` | do **not** pop   | right one executes first      |        |
 | ### 🧩 So the Logic Is:<br><br>When we see a new operator:<br><br>1. If there’s an operator already waiting on the stack that must execute **before** the current one (based on precedence or associativity),  <br>    → **pop it first** (append to postfix).<br>    <br>2. Then push the current operator.<br>    <br><br>That simple rule ensures the **final postfix expression represents the correct order of execution** for all possible operator combinations.Lower precedence | `+` vs `*` | don’t pop        | current has higher precedence |        |
 
-## My Implmentation Code
+## My Implementation Code
 
 ```cpp
 // Infix to postfix conversion algorithm:
