@@ -55,16 +55,30 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Data Structures/Stack - Complete With Questions.md",
+                "file": "Data Structures/Time & Space Complexity.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Stack - Complete With Questions"
+              "title": "Time & Space Complexity"
+            }
+          },
+          {
+            "id": "c777a38271e3f0bd",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Data Structures/Queue Structure.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Queue Structure"
             }
           }
         ],
-        "currentTab": 3
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -209,11 +223,13 @@
       "bases:Create new base": false
     }
   },
-  "active": "4444ce6cfba16fa5",
+  "active": "c777a38271e3f0bd",
   "lastOpenFiles": [
-    "Data Structures/Linked List Complete.md",
     "Data Structures/Time & Space Complexity.md",
+    "Data Structures/Queue Structure.md",
+    "Data Structures/Queue",
     "Data Structures/Stack - Complete With Questions.md",
+    "Data Structures/Linked List Complete.md",
     "Data Structures/Test",
     "Data Structures/Binary Search Complete.md",
     "Data Structures/doubly_linked_list.cpp",
