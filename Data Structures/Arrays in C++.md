@@ -1,4 +1,4 @@
-
+																															
 # Introduction to std::array
 
 >we mentioned that arrays fall into two categories:
