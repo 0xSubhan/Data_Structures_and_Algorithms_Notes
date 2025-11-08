@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Data Structures/Arrays in C++.md",
+                "file": "Data Structures/Linked List Complete.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Arrays in C++"
+              "title": "Linked List Complete"
             }
           },
           {
@@ -211,11 +211,11 @@
   },
   "active": "c8c9a96d7942af0d",
   "lastOpenFiles": [
+    "Data Structures/Arrays in C++.md",
+    "Data Structures/Binary Search Complete.md",
     "Data Structures/Queue Structure.md",
     "Data Structures/Linked List Complete.md",
     "Data Structures/Stack - Complete With Questions.md",
-    "Data Structures/Binary Search Complete.md",
-    "Data Structures/Arrays in C++.md",
     "Data Structures/Time & Space Complexity.md",
     "Data Structures/Queue",
     "Data Structures/Test",

@@ -1,4 +1,3 @@
-
 #  **What is an Abstract Data Type (ADT)?**
 
 >An **Abstract Data Type (ADT)** is a **concept** — not a concrete implementation.  
