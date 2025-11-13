@@ -87,7 +87,7 @@ An array can be used to store queue elements. A segment of the array, defined by
         
     - Else, increment `rear`.
         
-    - Store `X` at `A[rear]`.
+    - Store `X` at `A[rear]`. ...
         
 - `Dequeue()`**:**
     
