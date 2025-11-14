@@ -1,4 +1,4 @@
-## Introduction to Queues
+# Introduction to Queues
 
 Queues are a fundamental data structure for storing and organizing data in computers, characterized by a "First-In, First-Out" (FIFO) principle. This means the first element added to the queue is the first one to be removed. This contrasts with stacks, which follow a "Last-In, First-Out" (LIFO) principle.
 
