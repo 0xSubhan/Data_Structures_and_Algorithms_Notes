@@ -138,6 +138,5 @@ To overcome the wasted space issue in a simple array, a circular array concept c
 
 All operations in the circular array implementation also maintain a constant time complexity (O(1)).
 
-
 ---
 #
