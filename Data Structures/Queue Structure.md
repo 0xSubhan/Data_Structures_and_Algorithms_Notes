@@ -138,5 +138,33 @@ To overcome the wasted space issue in a simple array, a circular array concept c
 
 All operations in the circular array implementation also maintain a constant time complexity (O(1)).
 
+### Meaning Of:
+
+```cpp
+return ((rear + 1) % N) == front;
+```
+
+This line checks whether the **queue is full**.
+
+ In a circular queue (classic implementation), the queue is full when:
+
+👉 **The next position after `rear` is the same as `front`**
+
+Because this means:
+
+- `front` has stopped moving forward (queue is full)
+    
+- `rear` has reached the position just behind `front`
+    
+- There is NO empty space left to insert anything
+
+### 🔍 **Reason for using `front = (front + 1) % N;`**
+
+When you remove (dequeue) an element from a circular queue, you move `front` **to the next element**.
+
+But the queue is circular.  
+So after the last index (`N-1`), the next index is not `N` — it's **0**.
+
+**Modulo makes this wrap-around possible.**
+
 ---
-#
