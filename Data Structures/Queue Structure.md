@@ -168,3 +168,151 @@ So after the last index (`N-1`), the next index is not `N` — it's **0**.
 **Modulo makes this wrap-around possible.**
 
 ---
+# Linked List Implementation
+
+## Limitations of Array-Based Queue Implementation
+
+When implementing a queue with arrays, even with a circular array, there are limitations:
+
+- **Fixed Size**: Arrays have a fixed size, meaning the queue can become full.
+    
+- **Handling Full Arrays**: If the array is full, options include:
+    
+    - Denying further insertions (queue is full).
+        
+    - Creating a new, larger array and copying all elements, which is a costly O(N) operation.
+        
+- **Wasted Memory**: A large array allocated for potential maximum capacity might have significant unused memory if the queue size is typically small.
+    
+
+## Advantages of Linked List Implementation
+
+Using linked lists to implement queues avoids the problems associated with fixed-size arrays:
+
+- **Dynamic Size**: Linked lists can grow or shrink dynamically, eliminating the need to resize or handle full conditions.
+    
+- **Memory Efficiency**: Memory is allocated only as needed for each node, reducing wasted space.
+    
+
+## Linked List Basics
+
+A linked list is a collection of nodes, where each node contains two fields:
+
+- **Data**: Stores the actual value.
+    
+- **Next**: Stores the address (or reference) to the next node in the sequence.
+    
+
+Nodes are stored at non-contiguous memory locations. The linked list is identified by the address of its head node, often stored in a pointer variable named `head`.
+
+## Achieving O(1) Operations with Linked Lists
+
+To ensure both enqueue and dequeue operations take constant time, we need to manage pointers efficiently. If we insert at one end and remove from the other, one operation typically becomes O(N) in a standard singly linked list because traversing to the tail takes linear time.
+
+To overcome this, we use two pointer variables:
+
+- `front`: Always stores the address of the front node (for dequeue).
+    
+- `rear`: Always stores the address of the rear node (for enqueue).
+    
+
+### Enqueue Operation (Insertion at Rear)
+
+1. Create a new node with the data to be enqueued.
+    
+2. If the queue is empty (both `front` and `rear` are null), set both `front` and `rear` to point to the new node.
+    
+3. Otherwise, set the `next` pointer of the current `rear` node to point to the new node.
+    
+4. Update the `rear` pointer to point to the new node.
+    
+
+This process avoids traversal and ensures O(1) time complexity.
+
+### Dequeue Operation (Removal from Front)
+
+1. Check if the queue is empty. If so, print an error and return.
+    
+2. Store the address of the current `front` node in a temporary pointer.
+    
+3. If `front` and `rear` are pointing to the same node (only one element in the queue), set both `front` and `rear` to null.
+    
+4. Otherwise, update `front` to point to the `next` node in the sequence (`front = front->next`).
+    
+5. Free the memory of the node previously at the front using the temporary pointer.
+    
+
+This also ensures O(1) time complexity because we directly manipulate the `front` pointer and then free the memory.
+
+## C Code Structure
+
+```cpp
+// Linked List Implementation of Queues:
+class Queue_Link
+{
+private:
+    struct Node
+    {
+        int val;
+        Node* next;
+
+        Node(int value)
+        {
+            val = value;
+            next = nullptr;
+        }
+    };
+    Node* front = nullptr;
+    Node* rear = nullptr;
+public:
+    void Enqueue(int val)
+    {
+        Node* newNode = new Node(val);
+        if (front == nullptr && rear == nullptr)
+        {
+            front = rear = newNode;
+            return;
+        }
+        rear->next = newNode;
+        rear = newNode; 
+    }
+    void Dequeue()
+    {
+        Node* temp = front;
+        if (front == nullptr)
+        {
+            // Empty!
+            cout << "Empty Queue!\n";
+            return;
+        }
+        if (front == rear)
+        {
+            delete temp;
+            front = rear = nullptr;
+            return;
+        }
+        front = front->next;
+        delete temp;
+    }
+    bool isEmpty()
+    {
+        if (front == nullptr)
+        {
+            return true;
+        }
+        return false;
+    }
+    int Front()
+    {
+        if (front == nullptr)
+        {
+            cout << "Empty!\n";
+            return -1;
+        }
+        return front->val;
+    }
+
+}; 
+```
+
+---
