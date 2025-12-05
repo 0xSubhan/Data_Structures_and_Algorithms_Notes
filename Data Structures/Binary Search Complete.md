@@ -4,12 +4,13 @@ Binary Search is a highly efficient algorithm used to **search for an element in
 
 ### 🆚 **Linear Search vs Binary Search**
 
-|Aspect|Linear Search|Binary Search|
-|---|---|---|
-|Requirement|Array can be unsorted|Array **must be sorted** (increasing or decreasing)|
-|Method|Check **one-by-one**|**Divide and conquer** (halve the array each time)|
-|Time Complexity|**O(n)**|**O(log n)**|
-|Worst Case|Check all elements|Very few comparisons|
+| Aspect          | Linear Search         | Binary Search                                       |
+| --------------- | --------------------- | --------------------------------------------------- |
+| Requirement     | Array can be unsorted | Array **must be sorted** (increasing or decreasing) |
+| Method          | Check **one-by-one**  | **Divide and conquer** (halve the array each time)  |
+| Time Complexity | **O(n)**              | **O(log n)**                                        |
+| Worst Case      | Check all elements    | Very few comparisons                                |
+|                 |                       |                                                     |
 ### 🧠 Key Concept Before Using Binary Search
 
 > **The array must be sorted** — either in **increasing order** or **decreasing order**.  
@@ -225,7 +226,7 @@ Binary Search **divides by 2 each time**, so it takes **log₂(n) steps**, not n
 > 
 > Mathematically, this happens when:
 > 
-> n2k=1⇒k=log⁡2(n)\frac{n}{2^k} = 1 \Rightarrow k = \log_2(n)2kn​=1⇒k=log2​(n)
+> n/2^k=1⇒k=log⁡2(n)\frac{n}{2^k} = 1 \Rightarrow k = \log_2(n)2kn​=1⇒k=log2​(n)
 > 
 > Therefore, the time complexity of Binary Search in the worst and average case is **O(log n)**, because it performs approximately `log₂(n)` comparisons.”
 
@@ -829,5 +830,155 @@ arr[0] < arr[1]   → already increasing
 
 > Same for decreasing slope because there is not element at the right of the last element!
 
+
+---
+# Question: - Find Pivot in an Sorted & Rotated Array using Binary Search
+
+```cpp
+class Solution {
+  public:
+    int search(vector<int>& arr, int key) {
+        // Code Here
+        int s = 0; int e = arr.size()-1;
+        int mid = s + (e-s)/2;
+        while(s<e)
+        {
+            if(arr[mid] >= arr[0])
+            {
+                s = mid+1;
+            }
+            else
+            {
+                e = mid;
+            }
+            mid = s + (e-s)/2;
+
+        }
+        return s;
+    }
+};
+```
+
+# ✅ **What is a Sorted & Rotated Array?**
+
+A **sorted & rotated array** is originally sorted in increasing order, but then some elements from the beginning are moved to the end.  
+Example:
+
+```cpp
+Original sorted array: [1, 2, 3, 4, 5, 6, 7]
+Rotated:               [4, 5, 6, 7, 1, 2, 3]
+```
+
+In such an array, there is one special point where the rotation happens.  
+This point is called the **pivot**.
+
+# 🎯 **What is the Pivot?**
+
+The **pivot** is the **index of the smallest element** in the array.
+
+It is the point where the sorted order breaks.
+
+Example:
+
+```cpp
+[4, 5, 6, 7, 1, 2, 3]
+               ↑
+             pivot (value 1)
+```
+
+Why smallest element?  
+→ Because rotation always puts the smallest element at the break point.
+
+---
+
+# ⭐ **Pivot Finding Using arr[mid] >= arr[0] (Short Notes)**
+
+### **Purpose**
+
+- To find the **pivot** (index of smallest element) in a **sorted & rotated array**.
+    
+
+### **Key Observation**
+
+- The rotated array splits into two sorted parts:
+    
+    - **First block:** all elements **≥ arr[0]**
+        
+    - **Second block:** all elements **< arr[0]** (pivot lies here)
+
+# ⭐ **Binary Search Logic**
+
+### **1. Compute mid**
+
+```cpp
+mid = s + (e - s)/2
+
+```
+
+### **2. Check which block mid belongs to**
+
+#### **Case A — arr[mid] >= arr[0]**
+
+- Mid is in the **first sorted block**
+    
+- Pivot is on the **right**
+
+```cpp
+s = mid + 1
+
+```
+
+#### **Case B — arr[mid] < arr[0]**
+
+- Mid is in the **second sorted block**
+    
+- Pivot is on the **left (or at mid)**
+
+```cpp
+e = mid
+
+```
+
+### **3. Recompute mid each iteration**
+
+# ⭐ **Stopping Condition**
+
+- When `s == e`, binary search finishes
+    
+- That index is the **pivot**
+
+# ⭐ **Why This Works**
+
+- In rotated array, all numbers before pivot are ≥ arr[0]
+    
+- All numbers after pivot are < arr[0]
+    
+- Comparing with arr[0] tells us exactly which block mid is in
+
+# ⭐ **Final Output**
+
+```cpp
+return s;   // pivot index
+
+```
+
+# ⭐ **Why `while (s < e)` and not `<=`?**
+
+### ✔ Reason 1:
+
+We want to stop when the search space is reduced to **one index**.
+
+When:
+
+```cpp
+s == e
+```
+
+→ Only **one element** is left  
+→ That element **must** be the pivot  
+→ No need to check further  
+→ Loop stops
+
+If we used `s <= e`, the loop would run even when only one element is left, causing extra steps or a wrong state.
 
 ---
