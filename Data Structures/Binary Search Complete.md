@@ -837,7 +837,7 @@ arr[0] < arr[1]   → already increasing
 ```cpp
 class Solution {
   public:
-    int search(vector<int>& arr, int key) {
+    int getPivot(vector<int>& arr) {
         // Code Here
         int s = 0; int e = arr.size()-1;
         int mid = s + (e-s)/2;
@@ -889,7 +889,6 @@ Example:
 Why smallest element?  
 → Because rotation always puts the smallest element at the break point.
 
----
 
 # ⭐ **Pivot Finding Using arr[mid] >= arr[0] (Short Notes)**
 
@@ -982,3 +981,315 @@ s == e
 If we used `s <= e`, the loop would run even when only one element is left, causing extra steps or a wrong state.
 
 ---
+# Question: - Search an Element in a Sorted & Rotated array using Binary Search
+
+# ⭐ **Question Statement Explained**
+
+You are given an array that was originally **sorted in ascending order**, but then it was **rotated** at some pivot point that is unknown to you.
+
+### ✔ Example of rotation
+
+Original sorted array:
+
+```cpp
+[1, 2, 3, 4, 5, 6, 7]
+```
+
+Rotated at pivot 3:
+
+```cpp
+[4, 5, 6, 7, 1, 2, 3]
+```
+
+The array is still made of **two sorted parts**, just shifted.
+
+# ⭐ **Your Task**
+
+Given:
+
+- **A sorted & rotated array**
+    
+- **A target element**
+    
+
+You must **find the index of that target** using an algorithm that is **better than linear search (O(n))**.
+
+The expected solution is to apply **binary search logic**, achieving **O(log n)** time.
+
+# ⭐ **What Makes the Question Important?**
+
+A normal binary search cannot be applied directly because the array is **not fully sorted** — only **two parts are sorted**.
+
+So the challenge is:
+
+### ✔ How to modify binary search
+
+### ✔ How to identify which half is sorted
+
+### ✔ How to decide where to move (left or right)
+
+## Solution:
+
+```cpp
+class Solution {
+public:
+int binarySearch(vector<int>& arr,int s,int e,int key)
+{
+    int start = s , end = e;
+    int mid = start + (end-start)/2;
+
+    while (start <= end)
+    {
+        if (arr[mid] == key)
+        {
+            return mid;
+        }
+        else if(key > arr[mid]) // choosing right path  
+        {
+            start = mid + 1;
+        }
+        else // choosing left path
+            end = mid - 1;
+
+        mid = start + (end-start)/2;   
+    }
+    return -1;    
+}
+    int getPivot(vector<int>& arr) {
+        // Code Here
+        int s = 0; int e = arr.size()-1;
+        int mid = s + (e-s)/2;
+        while(s<e)
+        {
+            if(arr[mid] >= arr[0])
+            {
+                s = mid+1;
+            }
+            else
+            {
+                e = mid;
+            }
+            mid = s + (e-s)/2;
+
+        }
+        return s;
+    }    
+    int search(vector<int>& nums, int target) {
+        int pivot = getPivot(nums);
+
+        if(nums[pivot] <= target && nums[nums.size()-1] >= target)
+        {
+            // On the right slope!
+            return binarySearch(nums,pivot,nums.size()-1,target);
+        }else
+        {
+            return binarySearch(nums,0,pivot-1,target);
+        }
+        return -1;
+    }
+};
+```
+
+# 📌 **NOTES — Search in Sorted & Rotated Array (Binary Search Approach)**
+
+# **1️⃣ Understanding `getPivot()` – Finding the Rotation Point**
+
+### **Goal:**
+
+Find the **index of the smallest element** → the place where rotation happened.  
+This index divides the array into two sorted halves. So if we have pivot then we will have two missing element found! initially we knew the value of start and end but not the pivot by having pivot we have both those values now we decide based on this decision where to search!
+
+### **Logic Behind It:**
+
+- In a rotated sorted array:  
+    Left part (before pivot) is **sorted but larger**, right part (from pivot onward) is **sorted but smaller**.
+    
+- Example: `[7,8,9,1,2,3]`  
+    Pivot = index of **1**.
+    
+
+### **Algorithm Behavior:**
+
+- Use binary search pattern with `s < e`
+    
+- Compute `mid`
+    
+- Compare with first element `arr[0]`
+    
+
+### **Key Observations:**
+
+- If `arr[mid] ≥ arr[0]`  
+    → Mid is in **left (larger)** part of rotation  
+    → Move right: `s = mid + 1`
+    
+- Else  
+    → Mid is in **right (smaller)** part  
+    → Move left: `e = mid`
+    
+- Loop continues until `s == e`
+    
+- At the end:  
+    **`s` and `e` both point to the pivot index**
+    
+
+### **Result:**
+
+`return s;`
+
+# **2️⃣ Understanding `binarySearch()` – Normal Binary Search**
+
+We know that So move on kid!
+
+# **3️⃣ Understanding `search()` – Use Pivot to Decide the Correct Half**
+
+### **Goal:**
+
+Use the pivot to divide the array into **two sorted subarrays**, then binary search in the correct one.
+
+### **Step-by-step logic:**
+
+## **Step 1: Find pivot index**
+
+```cpp
+pivot = getPivot(nums)
+```
+
+## **Step 2: Decide in which sorted half the target lies**
+
+Two halves:
+
+### **Left half:**
+
+Indices → `0` to `pivot-1`  
+Sorted and contains elements **≥ nums[0]**
+
+### **Right half:**
+
+Indices → `pivot` to `n-1`  
+Sorted and contains elements **≤ nums[n-1]**
+
+## **Check which half contains the target:**
+
+```cpp
+if (nums[pivot] <= target && nums[n-1] >= target)
+```
+
+This condition checks if target lies in the **right sorted half**.
+
+- If true → search in `[pivot ... n-1]`
+    
+- Else → search in `[0 ... pivot-1]`
+
+## **Step 3: Perform binary search on selected half**
+
+```cpp
+return binarySearch(nums, pivot, nums.size()-1, target)
+```
+
+OR
+
+```cpp
+return binarySearch(nums, pivot, nums.size()-1, target)
+```
+
+# ✅ **SUMMARY (Super Quick Notes)**
+
+### **`getPivot()`**
+
+- Finds smallest element index = rotation point.
+    
+- Uses binary search with condition:
+    
+    - `arr[mid] >= arr[0]` → move right
+        
+    - else → move left
+        
+- Ends when `s == e`.
+    
+
+### **`binarySearch()`**
+
+- Standard binary search inside a sorted interval.
+    
+
+### **`search()`**
+
+- Use pivot to determine which sorted half contains the target.
+    
+- Apply binary search only in that half.
+    
+
+# 📌 **Time Complexity Analysis (Big-O)**
+
+For the whole algorithm:
+
+# **1️⃣ Time Complexity of `getPivot()`**
+
+### Why?
+
+- `getPivot()` uses **binary search** logic.
+    
+- In every iteration:
+    
+    - You cut the search space in half.
+        
+- Loop runs until `s == e`.
+    
+
+### Complexity:
+
+```cpp
+O(log n)
+```
+
+# **2️⃣ Time Complexity of `binarySearch()`**
+
+### Why?
+
+- Standard binary search.
+    
+- Search range size ≤ n.
+    
+- Each step halves the range.
+    
+
+### Complexity:
+
+```cpp
+O(log n)
+```
+
+# **3️⃣ Time Complexity of `search()`**
+
+`search()` does two things:
+
+1. Calls `getPivot()` → `O(log n)`
+    
+2. Calls `binarySearch()` (once) → `O(log n)`
+    
+
+### Add them together:
+
+```cpp
+O(log n) + O(log n) = O(2 log n)
+```
+
+In Big-O notation, constants are ignored:
+
+Final:
+
+```cpp
+O(log n)
+```
+
+# **Why O(log n)? (Intuition)**
+
+- Even though the array is rotated, you still reduce the problem size by half in each step.
+    
+- You use binary search **twice**, but that still keeps complexity logarithmic.
+    
+- Therefore, total time is still **logarithmic**, not linear.
+
+---
+
