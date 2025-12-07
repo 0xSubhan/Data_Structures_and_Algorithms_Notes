@@ -1292,4 +1292,304 @@ O(log n)
 - Therefore, total time is still **logarithmic**, not linear.
 
 ---
+# [69. Sqrt(x)](https://leetcode.com/problems/sqrtx/)
 
+# 📘 **Explanation of the `mySqrt` Function (Binary Search Approach)**
+
+The task is to compute the **integer square root** of a number `x`.  
+Integer square root means:  
+👉 the **largest number** whose square is **≤ x** (floor of √x).
+
+Example:
+
+- √10 = 3.16 → return **3**
+    
+- √16 = 4 → return **4**
+
+## 🔹 **1. Initialize Search Space**
+
+```cpp
+int s = 0;
+int e = x;
+```
+
+We assume the square root lies between **0 and x**.
+
+- Smallest possible √x = 0
+    
+- Largest possible √x = x (e.g., √1 = 1)
+
+## 🔹 **2. Calculate mid**
+
+```cpp
+long long int mid = s + (e - s) / 2;
+```
+
+- Prevents overflow
+    
+- Checks the middle number of the current range
+    
+
+## 🔹 **3. Main Binary Search Loop**
+
+```cpp
+while (s <= e)
+```
+
+We keep shrinking the search space until start crosses end.
+
+## 🔹 **4. Check if mid is the exact square root**
+
+```cpp
+if(square == x)
+    return mid;
+```
+
+Perfect square → immediately return.
+
+## 🔹 **5. If mid² is too big, move LEFT**
+
+```cpp
+else if(mid*mid > x)
+    e = mid - 1;
+```
+
+- mid is too large
+    
+- answer must be **smaller**
+    
+- shrink right boundary
+
+## 🔹 **6. If mid² is smaller than x → move RIGHT**
+
+```cpp
+else {
+    ans = mid;       // IMPORTANT
+    s = mid + 1;
+}
+```
+
+### Why `ans = mid`?
+
+Because:
+
+- mid² < x → mid is a **valid square root candidate**
+    
+- But there might be a **bigger valid number**, so search right
+    
+- Save `mid` as the **best answer found so far**
+    
+
+This ensures that if no perfect square is found,  
+we still have the **correct floor value** in `ans`.
+
+## 🔹 **7. Recalculate mid after updating s or e**
+
+```cpp
+mid = s + (e - s) / 2;
+```
+
+## 🔹 **8. Return ans**
+
+```cpp
+return ans;
+```
+
+If the loop ends without finding a perfect match,  
+`ans` holds the **largest number whose square ≤ x**.
+
+# ✅ **CASE 1: mid is TOO SMALL**
+
+`mid * mid < x`
+
+Example:  
+You want √10.  
+You try mid = 3 → 3×3 = 9 < 10 → TOO SMALL.
+
+What does this mean?
+
+- Maybe **3 is the answer**
+    
+- Maybe **something bigger** like 4 could be the answer
+    
+- So you **SAVE 3** because it is still a possible answer
+    
+- And you try bigger numbers
+    
+
+So we write:
+
+```cpp
+ans = mid;
+```
+
+Because **mid might be the correct answer**.
+
+# ❌ **CASE 2: mid is TOO BIG**
+
+`mid * mid > x`
+
+Example:  
+mid = 4 → 4×4 = 16 > 10 → TOO BIG.
+
+What does this mean?
+
+- 4 can **never** be the answer.
+    
+- 4 is **not possible**, not even close.
+    
+- Anything bigger than 4 is also impossible.
+    
+- So we NEVER save 4.
+    
+
+If we did:
+
+```cpp
+ans = 4;
+```
+
+We would be saving a **wrong** answer!
+
+# ⭐ KEY IDEA
+
+We only save `mid` when mid is **a possible answer**.
+
+### ✔ mid² < x → mid might be right → SAVE IT
+
+### ✖ mid² > x → mid can never be right → DON’T save it
+
+
+---
+```cpp
+double precision(int n,int pre, int temp)
+{
+    double factor = 1;
+    double ans = temp;
+    for (int i = 0; i < pre; i++)
+    {
+        factor = factor / 10;
+
+        for (double j = ans; j*j < n; j = j + factor)
+        {
+            ans = j;
+        }
+    }
+    return ans;
+}
+
+```
+
+# 📘 Notes on `precision(int n, int pre, int temp)`
+
+## 🔹 Purpose of the Function
+
+This function improves the accuracy of a square root that was already computed in **integer form** (usually by binary search).  
+It adds **decimal precision** to the answer by refining one digit at a time.
+
+# 🔹 Function Meaning
+
+```cpp
+double precision(int n, int pre, int temp)
+```
+
+- **n** → number whose square root we want
+    
+- **pre** → number of decimal places (precision)
+    
+- **temp** → integer square root (floor value) already calculated
+    
+
+It returns a `double` containing √n accurate up to `pre` decimal places.
+
+# 🔹 Key Variables
+
+### **factor**
+
+Starts as 1, and becomes smaller each loop:
+
+- After 1st iteration → 0.1
+    
+- After 2nd → 0.01
+    
+- After 3rd → 0.001
+    
+
+This tells us how much to increase the number while searching decimals.
+
+### **ans**
+
+Stores the best (most accurate) square-root value found so far.  
+Starts as `temp`, the integer square root.
+
+# 🔹 Outer Loop Logic
+
+```cpp
+for(int i = 0; i < pre; i++)
+{
+    factor = factor / 10;
+```
+
+Each loop increases decimal precision:
+
+|i|factor|Meaning|
+|---|---|---|
+|0|0.1|Find 1st decimal place|
+|1|0.01|Find 2nd decimal place|
+|2|0.001|Find 3rd decimal place|
+# 🔹 Inner Loop Logic
+
+```cpp
+for(double j = ans; j*j < n; j = j + factor)
+{
+    ans = j;
+}
+```
+
+### How this works:
+
+- Start `j` from the current best answer (`ans`)
+    
+- Keep increasing `j` by small steps (`factor`)
+    
+- Stop when `j * j` becomes **greater than or equal** to `n`
+    
+- The last valid `j` (i.e., `j*j < n`) is saved in `ans`
+    
+
+This finds the correct digit at the current decimal place.
+
+# 🔹 Example (n = 10, temp = 3, pre = 2)
+
+**First decimal place:**  
+factor = 0.1  
+Try: 3.0 → 3.1 → 3.2 (stop at 3.2 because 3.2² > 10)  
+→ ans = 3.1
+
+**Second decimal place:**  
+factor = 0.01  
+Try: 3.1 → 3.11 → … → 3.16 (3.17² > 10)  
+→ ans = 3.16
+
+Final answer: **3.16**
+
+# 🔹 Summary of Logic
+
+1. Start with integer √n
+    
+2. Reduce step size each loop (0.1 → 0.01 → 0.001...)
+    
+3. Move forward step-by-step until the square exceeds `n`
+    
+4. Save the last valid value in `ans`
+    
+5. Repeat for required decimal places
+    
+
+# 🔹 Final Output
+
+Returns a refined √n accurate up to `pre` decimal places.
+
+
+---
+	

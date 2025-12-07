@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "117e1adb00c88beb",
+        "id": "33a9b54bafc0acd9",
         "type": "tabs",
         "children": [
           {
-            "id": "ebd32beb2eae788c",
+            "id": "7003c947348ee8f9",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -167,11 +167,12 @@
       "bases:Create new base": false
     }
   },
-  "active": "ebd32beb2eae788c",
+  "active": "7003c947348ee8f9",
   "lastOpenFiles": [
+    "Data Structures/Binary Search Complete.md",
+    "Data Structures/Trees.md",
     "Data Structures/Stack - Complete With Questions.md",
     "Data Structures/Time & Space Complexity.md",
-    "Data Structures/Binary Search Complete.md",
     "Data Structures/Queue Structure.md",
     "Data Structures/Arrays in C++.md",
     "Data Structures/Linked List Complete.md",
