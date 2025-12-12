@@ -4,21 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "33a9b54bafc0acd9",
+        "id": "f3978f8aa48aa303",
         "type": "tabs",
         "children": [
           {
-            "id": "7003c947348ee8f9",
+            "id": "a9678c1d41ae6ce5",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Data Structures/Binary Search Complete.md",
+                "file": "Data Structures/Trees.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Binary Search Complete"
+              "title": "Trees"
             }
           }
         ]
@@ -78,7 +78,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "right": {
     "id": "91da241c8eee8e44",
@@ -166,7 +167,7 @@
       "bases:Create new base": false
     }
   },
-  "active": "7003c947348ee8f9",
+  "active": "a9678c1d41ae6ce5",
   "lastOpenFiles": [
     "Data Structures/Binary Search Complete.md",
     "Data Structures/Trees.md",
