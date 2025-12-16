@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "f3978f8aa48aa303",
+        "id": "a5015510b0aacff9",
         "type": "tabs",
         "children": [
           {
-            "id": "a9678c1d41ae6ce5",
+            "id": "43a9df80d9a545f2",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -167,10 +167,10 @@
       "bases:Create new base": false
     }
   },
-  "active": "a9678c1d41ae6ce5",
+  "active": "43a9df80d9a545f2",
   "lastOpenFiles": [
-    "Data Structures/Binary Search Complete.md",
     "Data Structures/Trees.md",
+    "Data Structures/Binary Search Complete.md",
     "Data Structures/Stack - Complete With Questions.md",
     "Data Structures/Time & Space Complexity.md",
     "Data Structures/Queue Structure.md",
