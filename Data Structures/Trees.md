@@ -456,7 +456,7 @@ A binary tree is **complete** if:
 
 #### Maximum nodes at level `i`:
 
-2i2^i2i
+`2^i`
 
 | Level | Max nodes | Filled means    |
 | ----- | --------- | --------------- |
@@ -559,7 +559,7 @@ Special cases:
 
 At level `i`, maximum number of nodes =
 
-2i2^i2i
+`2^i`
 
 |Level|Max Nodes|
 |---|---|
@@ -574,7 +574,7 @@ This happens because **each node can have two children**.
 
 For a binary tree with height `h`:
 
-Max Nodes=2h+1−1\text{Max Nodes} = 2^{h+1} - 1Max Nodes=2h+1−1
+`Max Nodes = 2^h+1 - 1`
 
 Example:
 
@@ -582,7 +582,7 @@ Example:
     
 - Levels = 4
     
-- Max nodes = 24−1=152^4 - 1 = 1524−1=15
+- Max nodes = 2^4 - 1 = 15
     
 
 This is achieved **only in perfect binary trees**.
@@ -727,6 +727,8 @@ Why?
 ➡ Because **we started counting from 1, not 0**  
 ➡ One node is always “extra” in `2^{h+1}`
 
+==look it this way 2 power doesnt start from 0 which would have given us 1 but it starts from 1 so it give us 2 and now one node is extra !
+
 So we subtract **1**:
 
 ```
@@ -754,3 +756,351 @@ But that last level **does not exist**, so we remove **1 node**.
 
 > **Binary trees double → totals overshoot by one → subtract 1**
 
+## 9️⃣ Height in Terms of Number of Nodes
+
+### A) Perfect Binary Tree
+
+#### Key property of a perfect binary tree
+
+- All levels are **completely filled**
+    
+- It has the **maximum number of nodes** for a given height
+    
+
+We already know:
+
+```markdown
+Max Nodes = 2^h+1 - 1
+```
+
+#### Deriving height from number of nodes
+
+Let:
+
+- `n` = number of nodes
+    
+- `h` = height
+
+```
+n = 2^h+1 - 1
+```
+
+Add 1 on both sides:
+
+```
+n + 1 = 2^h+1
+```
+
+Take log base 2:
+
+```
+Log2(n+1) = h + 1
+```
+
+So:
+
+```
+h = log2(n+1) - 1
+```
+
+#### Example
+
+```
+n = 15
+h = log2(16) - 1 = 4 - 1 = 3
+```
+
+✔ This matches the tree:
+
+- Levels = 4
+    
+- Height = 3
+    
+
+#### Why this works only for **perfect trees**
+
+Because **every possible node position exists**.  
+If even **one node is missing**, this formula is no longer exact.
+
+
+### B) Complete Binary Tree
+
+In a **complete binary tree**:
+
+- All levels except the last are filled
+    
+- Last level is filled **from left to right**
+    
+- Node count is **close to perfect**, but may not be exact
+    
+
+So we use:
+
+```
+h = floor(log2n)
+```
+
+#### Why floor (⌊ ⌋)?
+
+Because:
+
+- Tree may not be fully filled
+    
+- Height must be an **integer**
+    
+- We take the **largest integer height possible**
+
+#### Example
+
+```
+n = 13
+log2(13) = 3.7
+h = floor(3.7) = 3
+```
+
+✔ Correct height
+
+#### 🔑 Quick Comparison
+
+|Tree Type|Height Formula|
+|---|---|
+|Perfect|`log₂(n + 1) − 1`|
+|Complete|`⌊log₂ n⌋`|
+
+## 🔟 Why Height Matters (Time Complexity)
+
+### Core Idea
+
+> **Most tree operations move from root down to a leaf**
+
+The **longer this path**, the **more time** it takes.
+
+That path length = **height of tree**
+
+### Common Tree Operations
+
+- Searching
+    
+- Inserting
+    
+- Deleting
+    
+
+⏱ Time complexity depends on **height `h`**
+
+`Time directly propotional to height`
+
+### Best Case (Complete / Balanced Tree)
+
+`O(logn)`
+
+### Worst Case (Skewed Tree – like linked list)
+
+`O(n)`
+
+That’s why we try to **keep trees balanced**.
+
+## 11. Balanced Binary Tree
+
+A binary tree is **balanced** if:
+
+> For every node:  
+> **| height(left subtree) − height(right subtree) | ≤ 1**
+
+- Most commonly, `k = 1`
+    
+- Balanced trees keep height **minimum**
+    
+
+Example:
+
+- AVL Trees
+    
+- Red-Black Trees
+
+```
+        10
+       /  \
+      5    15
+     / \   /
+    3   7 12
+```
+
+### 1️⃣ Rule of a Balanced Binary Tree
+
+A binary tree is **balanced** if **for every node**:
+
+```
+|height(left subtree) - height(right subtree)| <= 1
+```
+
+📌 Height = number of **edges** in the longest path to a leaf  
+📌 Height of **empty tree = −1**
+
+### 2️⃣ Start from the Leaf Nodes (Bottom-Up)
+
+#### Leaf nodes: `3`, `7`, `12`
+
+Each leaf:
+
+```
+   ●
+```
+
+- Left subtree = empty → height = −1
+    
+- Right subtree = empty → height = −1
+    
+- Difference = |−1 − (−1)| = **0** ✔
+    
+
+✔ Balanced at leaf nodes
+
+### 3️⃣ Check Node `5`
+
+```
+      5
+     / \
+    3   7
+```
+
+- Height of left subtree (3) = **0**
+    
+- Height of right subtree (7) = **0**
+    
+
+Difference:
+
+```
+|0-0| = 0<= 1
+```
+
+✔ Node `5` is balanced  
+Height of node `5` = `max(0, 0) + 1 = 1`
+
+### 4️⃣ Check Node `15`
+
+```
+     15
+    /
+   12
+```
+
+Height of left subtree (12) = 0
+
+Height of right subtree (empty) = −1
+
+Difference:
+
+```
+|0-(-1)| = 1 <= 1
+```
+
+✔ Node `15` is balanced  
+Height of node `15` = `max(0, -1) + 1 = 1`
+
+### 5️⃣ Check Root Node `10`
+
+```
+        10
+       /  \
+      5    15
+```
+
+- Height of left subtree (rooted at 5) = **1**
+    
+- Height of right subtree (rooted at 15) = **1**
+    
+
+Difference:
+
+```
+|1-1| = 0<=1
+```
+
+✔ Root is balanced
+
+### 6️⃣ Final Conclusion
+
+|Node|Left Height|Right Height|Diff|Balanced?|
+|---|---|---|---|---|
+|3|−1|−1|0|✔|
+|7|−1|−1|0|✔|
+|12|−1|−1|0|✔|
+|5|0|0|0|✔|
+|15|0|−1|1|✔|
+|10|1|1|0|✔|
+
+## 12. Height Calculation Clarification
+
+We **do NOT** count number of nodes in path.  
+We count **number of edges**.
+
+|Tree|Height|
+|---|---|
+|Empty tree|-1|
+|Single node|0|
+|4 nodes in path|3|
+## 13. Storage of Binary Trees in Memory
+
+### 13.1 Linked Representation (Most Common)
+
+Each node stores:
+
+```cpp
+struct Node {
+    int data;
+    Node* left;
+    Node* right;
+};
+```
+
+✔ Flexible
+✔ Used for general binary trees
+
+### 13.2 Array Representation (Special Case)
+
+Used mainly for **complete binary trees** (like heaps).
+
+#### Index Rules
+
+For node at index `i`:
+
+- Left child → `2i + 1`
+    
+- Right child → `2i + 2`
+    
+
+Example:
+
+```cpp
+Index:  0  1  2  3  4  5  6
+Values: 2  4  1  ...
+```
+
+✔ Efficient memory usage
+✔ No pointers needed
+❌ Only works properly for complete trees
+
+## 14. Connection to Heaps & BST
+
+Heaps → Implemented using arrays
+
+Binary Search Trees (BST) → Efficient searching if tree is balanced
+
+Next topic usually:
+➡ Binary Search Tree (BST)
+
+## 15. Key Takeaways
+
+- Binary tree allows **max 2 children**
+    
+- Height determines **performance**
+    
+- Balanced trees give **log n time**
+    
+- Perfect tree = max efficiency
+    
+- Skewed tree = worst performance
+
+---
