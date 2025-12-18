@@ -1104,3 +1104,269 @@ Next topic usually:
 - Skewed tree = worst performance
 
 ---
+# Binary Search Tree (BST)
+
+## 1. Problem Statement
+
+We want a **data structure** to store a **modifiable collection of records** such that:
+
+- We can **search** records quickly
+    
+- We can **insert** new records
+    
+- We can **delete** records efficiently
+    
+
+The collection can be large (millions or billions of records), so performance is critical.
+
+## 2. Using Array or Linked List
+
+### A) Array
+
+#### Search
+
+- We must scan elements one by one
+    
+- **Worst-case time:**
+    
+    O(n)O(n)O(n)
+
+#### Insertion
+
+- If space exists → insert at end
+    
+- **Time:**
+    
+    O(1)O(1)O(1)
+
+#### Deletion
+
+- Requires shifting elements
+    
+- **Worst-case time:**
+    
+    O(n)O(n)O(n)
+
+#### Sorted Array
+
+- Search using **Binary Search**
+    
+- **Search time:**
+    
+    O(log⁡n)O(\log n)O(logn)
+- **Insertion & Deletion:** still need shifting
+    
+    O(n)O(n)O(n)
+
+👉 Problem: **Fast search but slow updates**
+
+### B) Linked List
+
+#### Search
+
+- Must traverse node by node
+    
+- **Time:**
+    
+    O(n)
+
+#### Insertion
+
+- At head → **O(1)**
+    
+- At tail → **O(n)**
+    
+
+#### Deletion
+
+- First search, then remove
+    
+- **Time:**
+    
+    O(n)
+
+👉 Problem: **Fast insertion, slow search**
+
+## 3. Why Binary Search Tree (BST)?
+
+We want:
+
+- Fast **search**
+    
+- Fast **insertion**
+    
+- Fast **deletion**
+    
+
+➡ **Binary Search Tree (BST)** provides all three in
+
+`O(logn) (average Case)`
+
+## 4. What is a Binary Search Tree?
+
+A **Binary Search Tree** is a **binary tree** with a special property:
+
+### BST Property:
+
+For **every node**:
+
+- All values in the **left subtree** are **less than or equal** to the node
+    
+- All values in the **right subtree** are **greater** than the node
+    
+- Both left and right subtrees are also BSTs (recursive property)
+
+### Example of a BST
+
+```markdown
+        15
+       /  \
+     10    20
+    / \   /  \
+   8  12 17  25
+```
+
+✔ Valid BST because:
+
+- Left values < parent
+    
+- Right values > parent
+    
+
+❌ If `12` were replaced with `16`, BST property would break.
+
+## 5. Searching in a BST
+
+### Steps:
+
+1. Start at the **root**
+    
+2. Compare the value:
+    
+    - If equal → found
+        
+    - If smaller → go **left**
+        
+    - If larger → go **right**
+        
+3. Repeat until found or tree ends
+    
+
+### Why is it fast?
+
+- At each step, **half of the tree is discarded**
+    
+- Similar to **binary search**
+    
+
+### Time Complexity:
+
+- **Balanced BST:**
+    
+    `O(Logn)`
+- **Unbalanced BST (worst case):**
+    
+    `O(n)`
+
+## 6. Balanced vs Unbalanced BST
+
+### Balanced BST
+
+- Difference between heights of left and right subtree ≤ 1
+    
+- Search space reduces by half at each step
+    
+- Best performance
+
+```
+Balanced BST:
+        15
+       /  \
+     10    20
+```
+
+### Unbalanced BST (Worst Case)
+
+Looks like a linked list:
+
+```
+10
+  \
+   12
+     \
+      15
+        \
+         20
+```
+
+- Search becomes linear
+    
+- **Time:** O(n)
+
+## 7. Insertion in BST
+
+### Steps:
+
+1. Start at root
+    
+2. Compare value
+    
+3. Move left or right
+    
+4. Insert at the first empty position
+    
+
+### Example:
+
+Insert `19`:
+
+```sql
+15 → right → 20 → left → 17 → right → insert 19
+```
+
+✔ No shifting needed  
+✔ Just pointer adjustments
+
+### Time Complexity:
+
+- **Average:**
+
+`O(logn)`
+
+## 8. Deletion in BST
+
+### Steps:
+
+1. Search the node → O(log n)
+    
+2. Adjust links (based on case)
+    
+    - Leaf node
+        
+    - One child
+        
+    - Two children
+        
+
+### Time Complexity:
+
+- **Average:**
+
+`O(logn)`
+
+## 9. Summary Comparison
+
+| Data Structure | Search       | Insert       | Delete       |
+| -------------- | ------------ | ------------ | ------------ |
+| Array          | O(n)         | O(1)         | O(n)         |
+| Sorted Array   | O(log n)     | O(n)         | O(n)         |
+| Linked List    | O(n)         | O(1)         | O(n)         |
+| **BST (avg)**  | **O(log n)** | **O(log n)** | **O(log n)** |
+## 10. Final Notes
+
+- BST combines benefits of **binary search** and **linked structure**
+    
+- Performance depends on **tree balance**
+    
+- Special trees (AVL, Red-Black) are used to **maintain balance**
+
