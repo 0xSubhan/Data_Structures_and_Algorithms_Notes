@@ -1370,3 +1370,284 @@ Insert `19`:
     
 - Special trees (AVL, Red-Black) are used to **maintain balance**
 
+---
+# BST Implementation through linked list
+
+```cpp
+#include <string>
+#include <string_view>
+#include <iostream>
+
+using namespace std;
+
+class BST
+{
+private:
+    struct Node
+    {
+        int m_data;
+        Node* left;
+        Node* right;
+
+        Node(int data)
+            : m_data{data}
+        {
+        }
+    };
+    Node* root {nullptr};
+    // ===== Private Recursive Insert =====
+    Node* Insert(Node* currentNode, int data)
+    {
+        if (currentNode == nullptr)
+        {
+            return new Node(data); 
+        }
+        else if(data <= currentNode->m_data)
+        {
+            currentNode->left = Insert(currentNode->left,data);
+        }
+        else
+        {
+            currentNode->right = Insert(currentNode->right,data);
+        }
+        return currentNode;
+    }
+    // ===== Private Recursive Search =====
+    bool Search(Node* currentNode, int key)
+    {
+        if (currentNode == nullptr)
+        {
+            return false;
+        }
+
+        if(key == currentNode->m_data)
+        {
+            return true;
+        }
+        else if(key < currentNode->m_data)
+        {
+            return Search(currentNode->left,key);
+        }
+        else
+            return Search(currentNode->right,key);
+        
+    }
+public:
+    // Insert Function:
+    void Insert(int data)
+    {
+        root = Insert(root,data);
+  
+    }
+    //
+    bool Search(int key)
+    {
+        return Search(root,key);
+    }
+
+};
+int main() {
+    
+    return 0;
+}
+```
+
+## **Binary Search Tree (BST) Using Class in C++ — Notes**
+
+## 1️⃣ Overview
+
+A **Binary Search Tree (BST)** is a binary tree where each node satisfies:
+
+- All nodes in the **left subtree** have values **less than or equal** to the node’s value.
+    
+- All nodes in the **right subtree** have values **greater** than the node’s value.
+    
+
+BSTs allow **fast insertion, search, and deletion** with average time complexity `O(log n)` for balanced trees.
+
+## 2️⃣ BST Class Structure
+
+```cpp
+class BST
+{
+private:
+    struct Node { ... };
+    Node* root{nullptr};
+
+    Node* Insert(Node* currentNode, int data);
+    bool Search(Node* currentNode, int key);
+
+public:
+    void Insert(int data);
+    bool Search(int key);
+};
+```
+
+- **`Node`**: Represents a tree node.
+    
+- **`root`**: Pointer to the root node of the BST. Initially `nullptr` (empty tree).
+    
+- **Private functions**: Recursive helpers for insert and search.
+    
+- **Public functions**: User interface — called directly on the tree.
+
+## 3️⃣ Node Structure
+
+```cpp
+struct Node
+{
+    int m_data;   // Value stored in node
+    Node* left;   // Pointer to left child
+    Node* right;  // Pointer to right child
+
+    Node(int data)
+        : m_data{data}, left{nullptr}, right{nullptr} {}
+};
+```
+
+Key points:
+
+Each node stores data and pointers to left/right children.
+
+Constructor initializes m_data and sets left/right to nullptr.
+
+## 4️⃣ Private Recursive Insert Function
+
+```cpp
+Node* Insert(Node* currentNode, int data)
+{
+    if (currentNode == nullptr)
+        return new Node(data);
+
+    if (data <= currentNode->m_data)
+        currentNode->left = Insert(currentNode->left, data);
+    else
+        currentNode->right = Insert(currentNode->right, data);
+
+    return currentNode;
+}
+```
+
+**Explanation:**
+
+1. **Base Case**: If the current spot is `nullptr`, create a new node.
+    
+2. **Recursive Case**:
+    
+    - If `data <= currentNode->m_data`, go **left**.
+        
+    - Else, go **right**.
+        
+3. Always **return the current node**, so parent pointers are updated correctly.
+    
+
+**Why return `currentNode`?**
+
+- Recursive insert may create a new subtree; returning the node ensures the parent points to the updated subtree.
+    
+- Also allows inserting into an **empty tree**, where root changes.
+
+## 5️⃣ Public Insert Function
+
+```cpp
+void Insert(int data)
+{
+    root = Insert(root, data);
+}
+```
+
+**Explanation:**
+
+- The user does **not** provide the current node.
+    
+- `root` is passed to the recursive helper.
+    
+- After insertion, `root` is updated in case the tree was empty.
+
+## 6️⃣ Private Recursive Search Function
+
+```cpp
+bool Search(Node* currentNode, int key)
+{
+    if (currentNode == nullptr)
+        return false;
+
+    if (key == currentNode->m_data)
+        return true;
+    else if (key < currentNode->m_data)
+        return Search(currentNode->left, key);
+    else
+        return Search(currentNode->right, key);
+}
+```
+
+**Explanation:**
+
+1. **Base Case**: If `currentNode` is `nullptr`, key is not found.
+    
+2. If `key` matches the current node, return `true`.
+    
+3. If `key` is **less**, go left; if **greater**, go right.
+    
+
+**Note:** Use `<` instead of `<=` to avoid unnecessary recursion.
+
+## 7️⃣ Public Search Function
+
+```cpp
+bool Search(int key)
+{
+    return Search(root, key);
+}
+```
+
+Provides a clean interface for the user.
+
+Starts the recursive search from root.
+
+## 8️⃣ How the BST Works
+Example:
+
+```cpp
+BST tree;
+tree.Insert(10);
+tree.Insert(5);
+tree.Insert(15);
+tree.Insert(7);
+```
+
+Tree structure after insertion:
+
+```cpp
+       10
+      /  \
+     5    15
+      \
+       7
+```
+
+Searching for 7 → go left (10 → 5), then right (5 → 7) → found.
+
+Searching for 20 → go right (10 → 15), then right (15 → nullptr) → not found.
+
+## 9️⃣ Key Points to Remember
+
+1. **Public vs Private Functions**:
+    
+    - Public functions handle **interface & root update**.
+        
+    - Private recursive functions handle **actual recursion**.
+        
+2. **Returning Node**: Always return the current node in recursion to maintain tree structure.
+    
+3. **Time Complexity**:
+    
+    - Average: `O(log n)`
+        
+    - Worst case (unbalanced tree): `O(n)`
+        
+4. **BST Property**: Left ≤ node < Right
+    
+
+---
+
