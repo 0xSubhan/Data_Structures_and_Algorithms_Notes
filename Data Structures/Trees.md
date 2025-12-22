@@ -1650,4 +1650,212 @@ Searching for 20 → go right (10 → 15), then right (15 → nullptr) → not f
     
 
 ---
+# BST implementation - memory allocation in stack and heap
 
+## 1️⃣ Overview of the Implementation
+
+### Class Structure
+
+```cpp
+class BST
+{
+private:
+    struct Node { int m_data; Node* left; Node* right; };
+    Node* root {nullptr};
+};
+```
+
+### Key Points
+
+- `root` is a **data member**, not a local variable
+    
+- Tree nodes are created using `new`
+    
+- **Recursion** is used for both insert and search
+    
+- Nodes live in **heap**
+    
+- Recursive calls live in **stack**
+
+## 2️⃣ Memory Segments Involved
+
+### Stack
+
+- Stores:
+    
+    - Function calls
+        
+    - Parameters
+        
+    - Local variables
+        
+- Automatically destroyed after function returns
+    
+
+### Heap
+
+- Stores:
+    
+    - Dynamically allocated nodes (`new Node(data)`)
+        
+- Exists until explicitly deleted or program ends
+    
+
+📌 **BST nodes always live in heap**
+
+## 3️⃣ Node Creation (Heap Behavior)
+
+### Code
+
+```cpp
+return new Node(data);
+```
+
+### What Happens
+
+- Memory is allocated in heap
+    
+- Constructor initializes `m_data`
+    
+- Pointer to node is returned
+    
+
+### Example Heap Node
+
+```sql
+Address: 500
+┌───────────────┐
+│ m_data = 100  │
+│ left = NULL   │
+│ right = NULL  │
+└───────────────┘
+```
+
+## 4️⃣ First Insert: `tree.Insert(100)`
+
+### Public Insert
+
+```cpp
+void Insert(int data)
+{
+    root = Insert(root, data);
+}
+```
+
+### Stack
+
+```cpp
+┌────────────────────────┐
+│ Insert(data=100)       │
+└────────────────────────┘
+```
+
+### Private Recursive Insert Call
+
+```cpp
+Insert(currentNode = nullptr, data = 100)
+```
+
+### Condition
+
+```cpp
+if (currentNode == nullptr)
+```
+
+➡ New node created in heap  
+➡ Returned to caller  
+➡ Assigned to `root`
+
+### Heap
+
+```cpp
+500 → [100 | NULL | NULL]
+```
+
+## 5️⃣ Second Insert: `tree.Insert(200)`
+
+### Comparisons
+
+```cpp
+200 > 100 → go right
+```
+
+### Recursive Call Stack
+
+```cpp
+Insert(root=500, data=200)
+  → Insert(currentNode=null, data=200)
+```
+
+### Heap After Insert
+
+```cpp
+500 → [100 | NULL | 600]
+600 → [200 | NULL | NULL]
+```
+
+### Tree Shape
+
+```cpp
+   100
+      \
+       200
+```
+
+## 6️⃣ Third Insert: `tree.Insert(300)`
+
+### Comparisons
+
+```cpp
+300 > 100 → right
+300 > 200 → right
+```
+
+### Stack Growth (Recursion)
+
+```cpp
+Insert(500,300)
+ → Insert(600,300)
+   → Insert(nullptr,300)
+```
+
+### Heap After Insert
+
+```cpp
+500 → [100 | NULL | 600]
+600 → [200 | NULL | 700]
+700 → [300 | NULL | NULL]
+```
+
+### Final Tree
+
+```cpp
+100
+   \
+    200
+        \
+         300
+```
+
+📌 **Each recursive call gets its own stack frame**
+
+## 7️⃣ Why `return currentNode;` Is Important
+
+### Code
+
+```cpp
+return currentNode;
+```
+
+### Purpose
+
+- Preserves tree links
+    
+- Ensures parent nodes keep correct child pointers
+    
+- Prevents loss of subtrees
+    
+
+❗ Without returning `currentNode`, tree structure breaks
+
+---
