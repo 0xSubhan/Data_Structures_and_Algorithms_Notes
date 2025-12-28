@@ -1859,3 +1859,254 @@ return currentNode;
 ❗ Without returning `currentNode`, tree structure breaks
 
 ---
+# Finding height of a binary tree
+
+```cpp
+    int Height(Node* current)
+    {
+        if (current == nullptr)
+        {
+            return -1;
+        }
+        return max( Height(current->left) , Height(current->right) ) + 1;
+        
+    } 
+```
+
+### 🌳 What is Height (Max Depth) of a Binary Tree?
+
+**Height = longest number of edges from the root down to a leaf**
+
+- We **start from root**
+    
+- We go **downward**
+    
+- We choose the **longest path**
+    
+- We count **edges (connections)**, NOT nodes
+
+### 📌 Important points
+
+- A **leaf node** has height **0** (nothing below it)
+    
+- An **empty tree (null)** has height **–1** (by convention for edge-based height)
+    
+- **Height of tree = height of root**
+
+### 🧠 How recursion calculates height
+
+For every node:
+
+```cpp
+height(node) = max( height(left), height(right) ) + 1
+```
+
+- We take height of left subtree
+    
+- We take height of right subtree
+    
+- We pick the bigger one
+    
+- We add **+1** for the edge we just used to go down
+    
+
+### ❗ Why return –1 for null?
+
+Because when we reach a leaf, its children are null:
+
+```cpp
+left = null  → return -1
+right = null → return -1
+```
+
+Then:
+
+```cpp
+max(-1, -1) + 1 = 0 ✔ (correct height of leaf)
+```
+
+So returning –1 **removes the fake extra edge** that doesn't exist.
+
+### 🔍 Small example
+
+```cpp
+    10
+   /  \
+  5   20
+      /
+     15
+```
+
+Paths from root to leaves:
+
+1. 10 → 5 (1 edge)
+    
+2. 10 → 20 → 15 (2 edges)
+    
+
+Longest path has **2 edges**, so:
+
+```cpp
+Height of tree = 2
+```
+
+### ⏱ Time complexity
+
+We visit each node **once** → so it's **O(N)**
+
+### Let’s visualize recursion on a **more difficult tree**:
+
+```
+        1
+       / \
+      2   3
+     / \   \
+    4   5   6
+       / \
+      7   8
+          /
+         9
+```
+
+We call: `findHeight(1)` (edge-based height, so `null → -1`)
+
+### 🔁 Recursive breakdown
+
+```css
+findHeight(1)
+├── findHeight(2)
+│   ├── findHeight(4)
+│   │   ├── findHeight(null) → -1
+│   │   └── findHeight(null) → -1
+│   │   ➤ 4 returns: max(-1,-1)+1 = 0
+│   │
+│   └── findHeight(5)
+│       ├── findHeight(7)
+│       │   ├── findHeight(null) → -1
+│       │   └── findHeight(null) → -1
+│       │   ➤ 7 returns: 0
+│       │
+│       └── findHeight(8)
+│           ├── findHeight(null) → -1
+│           └── findHeight(9)
+│               ├── findHeight(null) → -1
+│               └── findHeight(null) → -1
+│               ➤ 9 returns: 0
+│           ➤ 8 returns: max(-1,0)+1 = 1
+│
+│   ➤ 5 returns: max(0,1)+1 = 2
+│
+│➤ 2 returns: max(0,2)+1 = 3
+│
+└── findHeight(3)
+    ├── findHeight(null) → -1
+    └── findHeight(6)
+        ├── findHeight(null) → -1
+        └── findHeight(null) → -1
+        ➤ 6 returns: 0
+    ➤ 3 returns: max(-1,0)+1 = 1
+
+➤ 1 returns: max(3,1)+1 = 4 ✔
+Final Height = 4
+
+```
+
+
+---
+# Binary tree traversal - breadth-first and depth-first strategies
+
+### 🌳 What is Tree Traversal?
+
+Tree traversal means **visiting every node exactly once** and **doing something with the data** (like printing it).  
+Unlike arrays or linked lists, trees **branch into multiple directions**, so we need special strategies to visit nodes.
+
+## 1. 🔵 Breadth-First Traversal (BFS)
+
+- Visits nodes **level by level**, from **top → bottom**, **left → right**.
+    
+- In a binary tree, BFS is also called **Level Order Traversal**.
+    
+
+### Example order:
+
+```
+Level 0 → F  
+Level 1 → D, J  
+Level 2 → B, E, G, K  
+Level 3 → A, C, I  
+Level 4 → H
+```
+
+Final traversal: **F → D → J → B → E → G → K → A → C → I → H**
+
+## 2. 🟡 Depth-First Traversal (DFS)
+
+DFS goes **deep into a subtree first**, finishes it completely, then moves to the next subtree.
+
+There are 3 main DFS types (remember using: **D = Data/Visit, L = Left, R = Right**):
+
+### 🟢 Pre-Order (DLR)
+
+Visit current node → Go Left → Go Right  
+✔ Root comes **first**
+
+### 🟢 In-Order (LDR)
+
+Go Left → Visit node → Go Right  
+✔ Root comes **middle**
+
+If the tree is a **Binary Search Tree (BST)**, In-Order gives a **sorted list**.
+
+pasted
+
+### 🟢 Post-Order (LRD)
+
+Go Left → Go Right → Visit node  
+✔ Root comes **last**
+
+## 🧠 Manual Traversal Example (from transcript tree)
+
+Tree used in transcript:
+
+```livescript
+        F
+       / \
+      D   J
+     / \   \
+    B   E   K
+   / \       \
+  A   C       I
+               \
+                H
+```
+
+### Pre-Order Walkthrough (DLR)
+
+```css
+F → D → B → A → C → E → J → G → I → H → K
+```
+
+### In-Order (LDR)
+
+```css
+A → B → C → D → E → F → G → J → H → I → K
+```
+
+(Sorted if BST) ✔
+
+### Post-Order (LRD)
+
+```css
+A → C → B → E → D → H → I → J → K → F
+```
+
+## 🚀 Key Takeaways
+
+|Traversal|Pattern|Root Position|
+|---|---|---|
+|Pre-Order|D → L → R|First|
+|In-Order|L → D → R|Middle|
+|Post-Order|L → R → D|Last|
+|Level Order|Level by Level|Uses Queue (BFS)|
+
+---
