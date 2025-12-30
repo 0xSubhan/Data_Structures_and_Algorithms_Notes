@@ -2110,3 +2110,269 @@ A → C → B → E → D → H → I → J → K → F
 |Level Order|Level by Level|Uses Queue (BFS)|
 
 ---
+# Implementation of Breadth-first and Depth-first Traversal
+
+```cpp
+#include <string>
+#include <string_view>
+#include <queue>
+#include <iostream>
+
+using namespace std;
+
+class BST
+{
+private:
+    struct Node
+    {
+        int m_data;
+        Node* left = nullptr;
+        Node* right = nullptr;
+
+        Node(int data)
+            : m_data{data}
+        {
+        }
+    };
+    Node* root {nullptr};
+    // ===== Private Recursive Insert =====
+    Node* Insert(Node* currentNode, int data)
+    {
+        if (currentNode == nullptr)
+        {
+            return new Node(data); 
+        }
+        else if(data <= currentNode->m_data)
+        {
+            currentNode->left = Insert(currentNode->left,data);
+        }
+        else
+        {
+            currentNode->right = Insert(currentNode->right,data);
+        }
+        return currentNode;
+    }
+    // ===== Private Recursive Search =====
+    bool Search(Node* currentNode, int key)
+    {
+        if (currentNode == nullptr)
+        {
+            return false;
+        }
+
+        if(key == currentNode->m_data)
+        {
+            return true;
+        }
+        else if(key < currentNode->m_data)
+        {
+            return Search(currentNode->left,key);
+        }
+        else
+            return Search(currentNode->right,key);
+        
+    }
+    int FindMin_Recursion(Node* current)
+    {
+        if (current == nullptr)
+        {
+            cout << "Tree is empty!";
+            return -1;
+        }
+        else if(current->left == nullptr)
+        {
+            return current->m_data;
+        }
+        else 
+            return FindMin_Recursion(current->left);
+        
+    }
+    int FindMax_Recursion(Node* current)
+    {
+        if (current == nullptr)
+        {
+            cout << "Tree is empty!";
+            return -1;
+        }
+        else if(current->right == nullptr)
+        {
+            return current->m_data;
+        }
+        else 
+            return FindMax_Recursion(current->right);
+        
+    }  
+    int Height(Node* current)
+    {
+        if (current == nullptr)
+        {
+            return -1;
+        }
+        return max( Height(current->left) , Height(current->right) ) + 1;
+        
+    }  
+    void PreOrder(Node* current)
+    {
+        if (current == nullptr) return;
+        cout << current->m_data << " ";
+        PreOrder(current->left);
+        PreOrder(current->right);
+    }
+    void InOrder(Node* current)
+    {
+        if(current == nullptr) return;
+        InOrder(current->left);
+        cout << current->m_data << " ";
+        InOrder(current->right);
+    }
+    void PostOrder(Node* current)
+    {
+        if (current == nullptr) return;
+        PostOrder(current->left);
+        PostOrder(current->right);
+        cout << current->m_data << " ";
+        
+    }
+public:
+    // Insert Function:
+    void Insert(int data)
+    {
+        root = Insert(root,data);
+  
+    }
+    //
+    bool Search(int key)
+    {
+        return Search(root,key);
+    }
+    int FindMin()
+    {
+        if (root == nullptr)
+        {
+            cout << "tree is empty!";
+            return -1;
+        }        
+        Node* temp = root;
+        while (temp->left != nullptr)
+        {
+            temp = temp->left;
+        }
+        return temp->m_data;
+    }
+    int FindMax()
+    {
+        if (root == nullptr)
+        {
+            cout << "tree is empty!";
+            return -1;
+
+        }
+        
+        Node* temp = root;
+        while (temp->right != nullptr)
+        {
+            temp = temp->right;
+        }
+        return temp->m_data;
+    }
+    int FindMin_Recursion()
+    {
+        return FindMin_Recursion(root);
+    }
+    int FindMax_Recursion()
+    {
+       
+        return FindMax_Recursion(root);
+    }    
+    int Height()
+    {
+        return Height(root);
+    }
+    void LevelTraversal()
+    {
+        if(root == nullptr) return;
+        //
+        queue<Node*> storage;
+        storage.push(root);
+
+        while (!storage.empty())
+        {
+            Node* temp = storage.front();
+            cout << temp->m_data << " ";
+            if(temp->left != nullptr) storage.push(temp->left);
+            if(temp->right != nullptr) storage.push(temp->right);
+
+            storage.pop();
+        }
+    }
+    void PreOrder()
+    {
+        PreOrder(root); 
+    }
+    void InOrder()
+    {
+        InOrder(root);
+    }
+};
+
+int main() {
+    
+    BST tree;
+    tree.Insert(8); 
+    tree.Insert(3); 
+    tree.Insert(10); 
+    tree.Insert(1); 
+    tree.Insert(6); 
+    tree.Insert(4); 
+
+    // cout << "Min: " << tree.FindMin() << ".\n";
+    // cout << "Recursion_Min: " << tree.FindMin_Recursion() << ".\n";
+  
+    // cout << "Max: " << tree.FindMax() << ".\n";
+    // cout << "Recursion_Max: " << tree.FindMax_Recursion() << ".\n";   
+    
+    // Level Order Traversal:
+    // tree.LevelTraversal();
+
+    // PreOrder Traversal:
+    tree.PreOrder();
+
+    return 0;
+}
+```
+
+# Space and time complexity
+
+## **Breadth-First Traversal (BFS)**
+
+Also called **Level-Order Traversal**. Uses a **queue**.
+
+### **Time Complexity**
+
+- We visit **every node once** → **O(N)**
+    
+
+### **Space Complexity**
+
+Space depends on what we store in memory:
+
+1. **Queue storage**:
+    
+    - In worst case, the queue holds the **entire last level** of the tree.
+        
+    - For a balanced binary tree, last level ≈ N/2 nodes.
+        
+    - So, **O(N)** space.
+        
+2. **Output / result array (if stored)**: also **O(N)**
+    
+
+### **Final**
+
+- **Time: O(N)**
+    
+- **Space: O(N)**
+
+
+
+---
