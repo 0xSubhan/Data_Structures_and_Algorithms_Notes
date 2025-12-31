@@ -2373,6 +2373,168 @@ Space depends on what we store in memory:
     
 - **Space: O(N)**
 
+---
+# Checking if binary tree is BST
 
+```cpp
+    bool isSubtreeLesser(Node* current,int data)
+    {
+        if(current == nullptr) return true;
+
+        if ( current->m_data <= data 
+        && isSubtreeLesser(current->left,data)
+        && isSubtreeLesser(current->right,data)
+        )
+        {
+            return true;
+        }
+        else 
+            return false;
+    }
+    bool isSubtreeGreater(Node* current,int data)
+    {
+        if(current == nullptr) return true;
+
+
+        if ( current->m_data > data 
+        && isSubtreeGreater(current->left,data)
+        && isSubtreeGreater(current->right,data)
+        )
+        {
+            return true;
+        }
+        else 
+            return false;
+
+    }
+        // Method 1 Not Efficient!
+    bool isBinarySearchTree(Node* current)
+    {
+        if(current == nullptr) return true;
+        //
+        if ( isSubtreeLesser(current->left,current->m_data)
+            && isSubtreeGreater(current->right,current->m_data)
+                && isBinarySearchTree(current->left)
+                && isBinarySearchTree(current->right)
+    )
+        {
+            return true;
+        }
+        else 
+            return false;
+        
+    }
+    bool isBinarySearchTree(Node* current, int minVal, int maxVal)
+    {
+        if(current == nullptr) return true;
+        //
+        if (    current->m_data > minVal 
+                && current->m_data < maxVal
+                && isBinarySearchTree(current->left,minVal,current->m_data)
+                && isBinarySearchTree(current->right, current->m_data,maxVal)
+    )
+        {
+            return true;
+        }
+        else 
+            return false;
+        
+    }    
+
+```
+
+## **Problem**
+
+Given a **binary tree**, check whether it is a **Binary Search Tree (BST)**.
+
+## **Key Definitions**
+
+### **Binary Tree**
+
+- Each node has **at most 2 children** → `left` and `right`.
+    
+
+### **Binary Search Tree (BST) Rules**
+
+For **every node** in the tree:
+
+1. **All values in the left subtree** must be **less than (or ≤ if duplicates allowed)** the node’s value.
+    
+2. **All values in the right subtree** must be **greater than (>)** the node’s value.
+    
+3. **Left subtree must also be a BST**.
+    
+4. **Right subtree must also be a BST**.
+    
+
+> The rules must hold for **all nodes**, not just the root.
+
+## **Approach 1 — Naive (Slow)**
+
+### Idea:
+
+For each node:
+
+- Check if **max(left subtree) ≤ node**
+    
+- Check if **min(right subtree) > node**
+    
+- Recursively check left and right subtrees are BST
+    
+
+### Why it's slow?
+
+- To validate **each node**, we traverse its entire subtree.
+    
+- Nodes get visited **many times** repeatedly.
+    
+
+### **Time Complexity**
+
+- Worst case: **O(n²)** ❗
+    
+
+
+## **Approach 2 — Efficient (Range Method)**
+
+### Idea:
+
+Instead of checking whole subtrees, we give each node a **valid range**:
+
+- Start at root with range: `(-∞ , +∞)`
+    
+- When going **left**, update **max bound = current node value**
+    
+- When going **right**, update **min bound = current node value**
+    
+- At each node, check:
+
+```css
+min < node->data < max
+```
+
+### Why it's fast?
+
+- Each node is visited **only once**
+    
+- Each check takes **constant time O(1)**
+    
+
+### **Time Complexity**
+
+- **O(n)** ✔️ Best solution
+    
+
+
+## **Duplicate Handling (Important)**
+
+- If duplicates are allowed:
+    
+    - Change condition for left subtree to: `≤`
+        
+    - Or adjust range logic accordingly
+        
 
 ---
+
+
