@@ -2536,5 +2536,55 @@ min < node->data < max
         
 
 ---
+# Deleting A Node In A Tree
 
+```cpp
+    Node* Delete(Node* current,int val)
+    {
+        if(current == nullptr) return current;
+        else if( val < current->m_data ) current->left = Delete(current->left,val); 
+        else if( val > current->m_data ) current->right = Delete(current->right,val); 
+        else // Found the Node with the value!
+        {
+            // Case 1 : Node Have No Child Leaf Node!
+            if ( current->left == nullptr && current->right == nullptr )
+            {
+                delete current;
+                current = nullptr; // If not then it would be lefT dangling!
+                return current;
+            }
+            // Case 2 : Node Have one child only Logic for both if node have left child or right child:
+            else if( current->left == nullptr )
+            {
+                Node* temp = current->right;
+                delete current;
+                current = temp;
+                return current;
+            }
+            else if( current->right == nullptr )
+            {
+                Node* temp = current->left;
+                delete current;
+                current = temp;
+                return current;
+            }
+            else // Node To be deleted has two childs! 
+            {
+                Node* temp = FindMin_Recursion_address(current->right);
+                current->m_data = temp->m_data;
+                current->right = Delete(current->right,temp->m_data); 
+                return current;
+            }
+            
+        }
+
+    } 
+
+
+    void Delete(int val)
+    {
+        root = Delete(root,val);
+    }
+
+```
 
