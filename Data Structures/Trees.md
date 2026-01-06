@@ -2588,3 +2588,234 @@ min < node->data < max
 
 ```
 
+#### 🌳 **BST Property Reminder**
+
+- Left subtree → all values **less than** node
+    
+- Right subtree → all values **greater than** node
+    
+- This property **must remain true after deletion**
+
+#### ❗ **Why Deletion is Tricky in BST**
+
+When deleting a node:
+
+1. We must **remove the link from the parent**
+    
+2. We must **free memory** of the node
+    
+3. We must **not break BST ordering**
+    
+4. We must **not lose other nodes in the tree**
+
+### 🔍 **3 Possible Deletion Cases**
+
+### **Case 1 — Leaf Node (No Children)**
+
+- Simply:
+    
+    - Cut link from parent
+        
+    - Delete node from memory
+        
+    - Set pointer to `NULL`
+        
+- ✅ No restructuring needed, BST property stays valid
+
+### **Case 2 — Node with One Child**
+
+- We cannot delete the subtree below it
+    
+- Solution:
+    
+    - Connect parent **directly to the only child**
+        
+    - Delete the node
+        
+    - Child subtree remains intact
+        
+- Works for both:
+    
+    - Only right child exists
+        
+    - Only left child exists
+        
+- ✅ Still a valid BST
+
+### **Case 3 — Node with Two Children**
+
+- We **cannot** attach parent to only one side (we will lose the other subtree)
+    
+- Goal: Remove the value, but **keep both subtrees**
+    
+- Two valid strategies:
+    
+
+#### **Strategy A — Replace with Minimum from Right Subtree**
+
+- Find **smallest value in right subtree**
+    
+- Copy it into the node being deleted
+    
+- Now delete the duplicate node (which will fall into Case 1 or Case 2)
+    
+- Reason:
+    
+    - Since it came from right → it is greater than left subtree
+        
+    - Since it's minimum → it has no left child → easy to delete
+        
+
+#### **Strategy B — Replace with Maximum from Left Subtree**
+
+- Find **largest value in left subtree**
+    
+- Copy it into node being deleted
+    
+- Delete duplicate (now Case 1)
+    
+- Reason:
+    
+    - Came from left → still smaller than right subtree
+        
+    - Maximum node cannot have a right child → easy to delete
+        
+- Both approaches are correct and maintain BST structure
+
+### 🔁 **Recursive Deletion Function Logic (Key Points)**
+
+### 🧠 Core Recursive Logic
+
+#### 1️⃣ **Stop condition**
+
+```cpp
+if(current == nullptr) return current;
+```
+
+- Tree/subtree is empty → nothing to delete
+    
+- Returns `nullptr` back up
+
+#### 2️⃣ **Search phase (recurse down the tree)**
+
+```cpp
+else if(val < current->m_data)
+    current->left = Delete(current->left, val);
+
+else if(val > current->m_data)
+    current->right = Delete(current->right, val);
+```
+
+- We don’t delete here yet
+    
+- We **go deeper** until we find the node
+    
+- The returned pointer is **reassigned** because child root might change after deletion
+    
+
+📌 Important:
+
+- `current->left = ...` reconnects the tree
+    
+- The function itself keeps returning up the call stack
+    
+
+### 3️⃣ **Deletion phase (when node is found)**
+
+Now we handle 3 structural cases:
+
+### **Case 1 — Leaf node**
+
+```cpp
+delete current;
+current = nullptr;
+return current;
+```
+
+Returns `nullptr` so parent unlinks it:
+
+```cpp
+parent->left = nullptr;  // or right = nullptr
+```
+
+### **Case 2 — Only one child**
+
+```cpp
+Node* temp = current->right;  // or left
+delete current;
+current = temp;
+return current;
+```
+
+Returns the child so parent attaches it in place of deleted node:
+
+```cpp
+parent->right = temp;
+```
+
+### **Case 3 — Two children**
+
+```cpp
+Node* temp = FindMin_Recursion_address(current->right);
+current->m_data = temp->m_data;
+current->right = Delete(current->right, temp->m_data);
+return current;
+```
+
+Why this works:
+
+- We don’t remove `current`
+    
+- We **replace its value** with a safe candidate (min-right or max-left)
+    
+- Then we delete the duplicate deeper
+    
+- Finally return `current` because it is **still the root**, only modified
+
+### 🔁 **Recursive Unwind (Bottom → Up reconnection)**
+
+When recursion unfolds:
+
+- Each call returns a pointer
+    
+- Parent nodes **re-link their children using the return**
+    
+- Eventually the topmost call returns the **updated tree root**
+    
+
+Example:
+
+```cpp
+parent->left  = return_value;
+parent->right = return_value;
+```
+
+So the tree heals itself while going back up
+
+### 🏁 Final Wrapper Function
+
+```cpp
+root = Delete(root, val);
+```
+
+- Captures returned pointer
+    
+- Necessary because if root itself was deleted/replaced, we must update it
+
+### 📌 Summary Table
+
+|Stage|What happens|
+|---|---|
+|Going down|Search using recursion|
+|Found node|Handle 3 delete cases|
+|Coming up|Parent reconnects tree using returned pointer|
+|Final return|Updated subtree root (finally stored in `root`)|
+
+### 🧠 Key Insight
+
+> Every `return` is a message saying:  
+> **"This should now be the root of the subtree you gave me."**
+
+This is why deletion works safely and recursively.
+
+---
