@@ -2313,6 +2313,10 @@ public:
     {
         InOrder(root);
     }
+    void PostOrder()
+    {
+	    PostOrder(root);
+    }
 };
 
 int main() {
@@ -2817,5 +2821,555 @@ root = Delete(root, val);
 > **"This should now be the root of the subtree you gave me."**
 
 This is why deletion works safely and recursively.
+
+---
+# Inorder Successor in a binary search tree
+
+### In-Order Traversal
+
+In **in-order traversal**, nodes are visited in this order:
+
+```cpp
+Left subtree → Node → Right subtree
+```
+
+**Important property**:
+
+> In-order traversal of a BST prints values in **sorted (ascending) order**.
+
+Example:
+
+```cpp
+In-order: 6, 8, 10, 11, 12, 15, 16, 17, 20, 25, 27
+```
+
+## 2. What Is an In-Order Successor?
+
+The **in-order successor** of a node is:
+
+> The node that appears **immediately after** the given node in **in-order traversal**.
+
+In a BST, this means:
+
+> The **next greater value** in the tree.
+
+## 3. Naive Approach (Why Not Use It?)
+
+You could:
+
+1. Perform full in-order traversal (O(n))
+    
+2. Store values
+    
+3. Find the next element
+    
+
+❌ **Problem**: This takes **O(n)** time  
+✔ We want **O(h)** time, where **h = height of tree**
+
+Balanced BST ⇒ `h = log₂n`
+
+## 4. Key Insight: Two Possible Cases
+
+Let the given node be **X**.
+
+## ✅ Case 1: Node Has a Right Subtree
+
+### Observation
+
+If a node has a **right child**, then:
+
+- After visiting the node, in-order traversal moves to the **right**
+    
+- Then it keeps going **left as much as possible**
+    
+
+### Rule
+
+> **In-order successor = leftmost node in the right subtree**
+
+### Example
+
+```cpp
+    10
+      \
+      12
+     /
+   11
+```
+
+Successor of **10** → **11**
+
+### Why?
+
+- Right subtree exists
+    
+- Minimum value in right subtree comes next
+
+## ✅ Case 2: Node Has NO Right Subtree
+
+Now it gets interesting.
+
+### Observation
+
+- We must move **upwards**
+    
+- We look for the **nearest ancestor** where:
+    
+    - The given node lies in its **left subtree**
+        
+
+### Rule
+
+> **Successor = deepest ancestor for which the node is in its left subtree**
+
+### Example 1
+
+```
+    10
+   /
+  8
+ /
+6
+```
+
+Successor of **6** → **8**
+
+### Example 2
+
+```
+       15
+      /
+     10
+       \
+        12
+```
+
+Successor of **12** → **15**
+
+Why?
+
+- 12 is in right of 10 ❌
+    
+- 12 is in left of 15 ✅
+
+## 5. How Do We Find Ancestors?
+
+### Two Design Choices
+
+### Option 1: Store Parent Pointer
+
+```cpp
+Node* parent;
+```
+
+✔ Easy upward traversal  
+❌ Extra memory
+
+### Option 2 (Used Here): Start From Root
+
+We:
+
+1. Walk from **root to the node**
+    
+2. Track potential successor using BST property
+    
+
+✔ No extra memory  
+✔ Still **O(h)** time
+
+## 6. Final Algorithm
+
+### Steps
+
+1. **Search** for the node
+    
+2. If node has **right subtree**
+    
+    - Return **minimum node in right subtree**
+        
+3. Else
+    
+    - Traverse from root
+        
+    - Track deepest ancestor where node is in left subtree
+
+# Implementation
+
+![[Screenshot from 2026-01-10 19-29-03.png]]
+
+## Goal of This Function
+
+```cpp
+struct Node* GetSuccessor(struct Node* root, int data)
+```
+
+👉 **Find the in-order successor of a node with value `data` in a BST**
+
+Recall:
+
+> **In-order successor = next larger value in the BST**
+
+## Step 0: Big Picture of the Algorithm
+
+There are **two cases**:
+
+1. **Node has a right subtree**  
+    → successor = **minimum value in right subtree**
+    
+2. **Node has NO right subtree**  
+    → successor = **nearest ancestor for which this node lies in the left subtree**
+    
+
+This code implements exactly that.
+
+## Step 1: Find the Target Node
+
+```cpp
+struct Node* current = Find(root, data);
+if (current == NULL) return NULL;
+```
+
+What’s happening?
+
+We first search the BST to find the node whose successor we want
+
+If the value does not exist → no successor → return NULL
+
+⏱ Time: O(h)
+
+## Step 2: Case 1 — Node Has Right Subtree
+
+```cpp
+if (current->right != NULL) {   // Case 1
+    return FindMin(current->right);
+}
+```
+
+### Why does this work?
+
+If a node has a **right subtree**, then:
+
+- In-order traversal goes **right**
+    
+- Then keeps going **left as much as possible**
+    
+
+So the successor is:
+
+> **Leftmost node of the right subtree**
+
+Example:
+
+```
+    10
+      \
+      12
+     /
+   11
+```
+
+Successor of 10 → 11
+
+That’s exactly what FindMin() does.
+
+## Step 3: Case 2 — Node Has NO Right Subtree
+
+This is the tricky part 👇
+
+```cpp
+else {
+    struct Node* successor = NULL;
+    struct Node* ancestor = root;
+```
+
+### Meaning of variables
+
+|Variable|Meaning|
+|---|---|
+|`ancestor`|Used to walk from root → current|
+|`successor`|Best candidate found so far|
+## The While Loop (Core Logic)
+
+```cpp
+while (ancestor != current) {
+```
+
+We walk from root to the current node, just like BST search.
+
+### Case A: Current is in LEFT subtree of ancestor
+
+```cpp
+if (current->data < ancestor->data) {
+    successor = ancestor;
+    ancestor = ancestor->left;
+}
+```
+
+### Why update successor here?
+
+If:
+
+```cpp
+current < ancestor
+```
+
+Then:
+
+- Current node lies in **left subtree**
+    
+- This ancestor is **greater than current**
+    
+- So it is a **valid successor candidate**
+    
+
+But we don’t stop here!  
+We go left to see if there’s a **closer (smaller) successor**.
+
+> This is why it’s called the **deepest ancestor**
+
+### 🔴 Case B: `current` is in the RIGHT subtree of `ancestor`
+
+```cpp
+else
+    ancestor = ancestor->right;
+```
+
+This happens when:
+
+```cpp
+current->data > ancestor->data
+```
+
+#### 1️⃣ What does this condition mean?
+
+It means:
+
+```cpp
+ancestor < current
+```
+
+So the tree looks like this:
+
+```cpp
+ancestor
+    \
+     current   (or somewhere deeper on the right)
+```
+
+👉 **Current node is in the RIGHT subtree of ancestor**
+
+#### 2️⃣ Why can this ancestor NOT be the successor?
+
+### Key rule (very important):
+
+> In-order successor must be **greater than current**
+
+But also:
+
+> It must be the **smallest** value greater than current
+
+### In-order traversal order reminder:
+
+```cpp
+LEFT → NODE → RIGHT
+```
+
+If `current` is in the **right subtree** of `ancestor`, then:
+
+1. `ancestor` is visited **before** its right subtree
+    
+2. That means `ancestor` was already visited **before current**
+    
+3. So `ancestor` comes **BEFORE current**, not after
+    
+
+❌ Therefore:
+
+> `ancestor` **cannot** be the in-order successor
+
+#### 3️⃣ Visualization (This Makes It Click)
+
+##### Example Tree
+
+```
+        15
+       /
+      10
+        \
+         12   ← current
+```
+
+##### In-order traversal:
+
+```
+10 → 12 → 15
+```
+
+Notice:
+
+- `10` is visited **before** `12`
+    
+- So `10` **cannot** be successor of `12`
+
+#### 4️⃣ What Should We Do Then?
+
+Since `ancestor` is **too small**, we must look **higher or deeper**.
+
+But how?
+
+👉 Using BST rules:
+
+- If `current > ancestor`
+    
+- Then `current` lies in the **right subtree**
+    
+- So we move:
+
+```cpp
+ancestor = ancestor->right;
+```
+
+We are **narrowing the search path** toward `current`.
+
+#### 5️⃣ Step-by-Step Walkthrough (Important)
+
+##### Tree
+
+```
+        15
+       /
+      10
+        \
+         12   ← current
+```
+
+
+### Code Walk
+
+|ancestor|comparison|action|successor|
+|---|---|---|---|
+|15|12 < 15|successor = 15, go left|15|
+|10|12 > 10|go right|15|
+|12|reached current|stop|15|
+
+### Notice the key point:
+
+- When we went **right**, we did **NOT** update successor
+    
+- Because this ancestor was **already visited earlier**
+    
+
+#### 6️⃣ Real-Life Analogy (Very Helpful)
+
+Imagine **sorted numbers**:
+
+```
+[10, 12, 15]
+```
+
+You are at **12**.
+
+Ask:
+
+> Is 10 a successor?
+
+No ❌  
+Because it comes **before** 12.
+
+That’s exactly what happens in **Case B**.
+
+#### 7️⃣ One-Line Rule (Memorize This)
+
+> If current node lies in the right subtree of an ancestor, that ancestor was already visited in in-order traversal, so it cannot be the successor.
+
+## 8️⃣ Why We Still Need to Move Right
+
+Even though ancestor is not the successor:
+
+- The successor might be **higher up**
+    
+- Or in another subtree
+    
+
+So we **continue walking** until:
+
+```cpp
+ancestor == current
+```
+
+At the end:
+
+- `successor` holds the **nearest valid ancestor**
+    
+- Or remains `NULL` if no successor exists
+
+# Step 4: Return the Result
+
+```cpp
+return successor;
+```
+
+- If a successor exists → returned
+    
+- If current is the **largest element** → successor remains `NULL`
+
+# Full Dry Run Example (Very Important)
+
+## Tree
+
+```
+        15
+       /  \
+      10   20
+        \
+         12
+```
+
+### Find successor of `12`
+
+#### Step-by-step:
+
+|ancestor|comparison|action|successor|
+|---|---|---|---|
+|15|12 < 15|go left|15|
+|10|12 > 10|go right|15|
+|12|reached current|stop|15|
+
+✅ **Successor = 15**
+
+## Another Dry Run: Successor of `6`
+
+```
+        10
+       /
+      8
+     /
+    6
+```
+
+|ancestor|comparison|successor|
+|---|---|---|
+|10|6 < 10|10|
+|8|6 < 8|8|
+|6|reached|8|
+
+✅ **Successor = 8**
+
+# Why This Algorithm Is Efficient
+
+|Operation|Time|
+|---|---|
+|Search node|O(h)|
+|FindMin|O(h)|
+|Ancestor traversal|O(h)|
+
+✔ **Total: O(h)**  
+✔ Balanced BST → **O(log n)**
+
+# One-Line Intuition (Memorize This)
+
+> If a node has a right subtree, successor is the leftmost node there.  
+> Otherwise, successor is the nearest ancestor where the node lies in the left subtree.
 
 ---
