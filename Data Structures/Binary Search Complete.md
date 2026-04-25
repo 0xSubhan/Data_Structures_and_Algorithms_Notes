@@ -161,74 +161,64 @@ int binarySearch(int arr[],int size,int key)
 ✅ Extremely fast → `O(log n)`  
 ✅ Return `index` if found, `-1` if not found
 
-### ✂️  How the Search Space Reduces
+## O(log n) — Binary Search Complexity
 
-Binary Search doesn’t check all elements.  
-It **cuts the array into half** each step:
+### The Core Idea
 
-| Step                                      | Elements Remaining |
-| ----------------------------------------- | ------------------ |
-| Start                                     | n                  |
-| 1st step                                  | n / 2              |
-| 2nd step                                  | n / 4              |
-| 3rd step                                  | n / 8              |
-| …                                         | …                  |
-| k-th step, at kth step there is 1 element | n / (2^k)          |
+Binary search works on a **sorted array** by repeatedly cutting the search space in **half**.
 
-We stop when **only 1 element** is left.
+Each step eliminates 50% of remaining elements. So if you start with `n` elements:
 
-### ❓ **When Will It Stop?**
+|Step|Elements Remaining|
+|---|---|
+|0|n|
+|1|n/2|
+|2|n/4|
+|3|n/8|
+|k|n/2ᵏ|
 
-The algorithm stops when:
+You stop when 1 element remains: `n/2ᵏ = 1` → `k = log₂(n)`
 
-`n/2^k = 1 => n=2^k => k=log2(n)`
+So the number of steps = **log₂(n)** → **O(log n)**
 
-👉 This `k` is the **number of steps/iterations**.
+### Real Numbers Example
 
-### 🧾 **Time Complexity Calculation**
+|Array Size (n)|Binary Search Steps|Linear Search (worst)|
+|---|---|---|
+|8|3|8|
+|1,000|~10|1,000|
+|1,000,000|~20|1,000,000|
+|1,000,000,000|~30|1,000,000,000|
 
-| Case             | Explanation                         | Complexity   |
-| ---------------- | ----------------------------------- | ------------ |
-| **Best Case**    | Middle is the target in first check | **O(1)**     |
-| **Worst Case**   | Keep dividing until 1 element left  | **O(log n)** |
-| **Average Case** | Similar to worst case               | **O(log n)** |
-### 📌 **Why O(log n)? (Connecting to Log Definition)**
+> Searching **1 billion** elements takes only **~30 steps**. That's the power of O(log n).
 
-Recall the definition of logarithm:
 
-> `log2(n)` = “The power to which 2 must be raised to get to n”.
+## 🎤 How to Answer in an Interview
 
-OR
+### Step 1 — State the complexity upfront
 
->  `log2(n)`= “How many times can we divide n by 2 to reach 1?”
+> _"Binary search runs in O(log n) time."_
 
-Binary Search **divides by 2 each time**, so it takes **log₂(n) steps**, not n steps.
+### Step 2 — Explain WHY (the halving argument)
 
-### 📊 **Growth Rate Understanding**
+> _"At every step, we compare the target with the middle element. Based on the result, we discard half the array. So with n elements, we can only halve it log₂(n) times before the search space becomes 1."_
 
-| n (elements) | Linear Search Steps (O(n)) | Binary Search Steps (O(log n)) |
-| ------------ | -------------------------- | ------------------------------ |
-| 16           | 16                         | 4                              |
-| 1024         | 1024                       | 10                             |
-| 1,000,000    | 1,000,000                  | 20                             |
+### Step 3 — Give the math intuitively
 
-🚀 Even for **1 million** elements, Binary Search uses only **20 steps!**
+> _"If n = 1 million, log₂(1,000,000) ≈ 20. So we find the answer in at most 20 comparisons — that's incredibly efficient compared to a linear scan."_
 
-### 🎤 **Interview Answer: Time Complexity of Binary Search**
+### Step 4 — Mention the prerequisite
 
-**Answer:**
+> _"The key requirement is that the array must be **sorted**. Binary search doesn't work on unsorted data."_
 
-> “Binary Search works on a sorted array by repeatedly dividing the search space in half.  
-> In each step, it compares the target with the middle element and eliminates half of the elements.  
-> So, instead of checking all `n` elements like linear search, it reduces the problem size to `n/2`, then `n/4`, `n/8`, and so on.
-> 
-> We stop when the search space becomes 1.
-> 
-> Mathematically, this happens when:
-> 
-> n/2^k=1⇒k=log⁡2(n)\frac{n}{2^k} = 1 \Rightarrow k = \log_2(n)2kn​=1⇒k=log2​(n)
-> 
-> Therefore, the time complexity of Binary Search in the worst and average case is **O(log n)**, because it performs approximately `log₂(n)` comparisons.”
+### Step 5 — Mention space complexity too (bonus points)
+
+> _"Space complexity is O(1) for the iterative version since we only use a few pointers. The recursive version uses O(log n) space due to the call stack."_
+
+
+### Bonus: If asked "Why log and not something else?"
+
+> _"Because we're dividing by 2 each time. Repeated halving is the definition of a logarithm — the question 'how many times can I divide n by 2?' is answered by log₂(n)."_
 
 ---
 # Question: [Find First and Last Position of Element in Sorted Array](https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/)
@@ -382,301 +372,6 @@ You are given an integer **mountain** array `arr` of length `n` where the 
 Return the index of the peak element.
 
 Your task is to solve it in `O(log(n))` time complexity.
-
-### Code
-
-```cpp
-class Solution {
-public:
-    int peakIndexInMountainArray(vector<int>& arr) {
-        int s = 0 , e = arr.size() - 1;
-        int mid = s + (e-s)/2;
-
-        while(s<e)
-        {
-            if(arr[mid] < arr[mid+1])
-            {
-                s = mid + 1;
-            }
-            else 
-            {
-                e = mid;
-            }
-            mid = s + (e-s)/2; 
-        }
-        return s;
-    }
-};
-```
-
-### ⛰️ Problem: Peak Index in a Mountain Array (Binary Search Approach)
-
-We are given a **mountain array** (strictly increases then strictly decreases).  
-The goal is to **find the peak index** — the highest point.
-
-### 🧭 Understanding the Mountain Shape
-
-```cpp
-Index:  0   1   2   3   4   5   6
-Array: [1,  3,  5,  7,  6,  4,  2]
-                 ↑
-               Peak = 7 at index 3
-```
-
-### 💡 Intuition Behind Binary Search on Mountain
-
-At any point `mid`:
-
-| Condition                 | Meaning                                 | Move                       |
-| ------------------------- | --------------------------------------- | -------------------------- |
-| `arr[mid] < arr[mid + 1]` | You are on **ascending slope**          | Move Right → `s = mid + 1` |
-| `arr[mid] > arr[mid + 1]` | You are on **peak or descending slope** |                            |
-
-### 🧪 Why `while (s < e)` and NOT `s <= e`?
-
-#### ✅ Key Difference
-
-| Condition | What It Means                                                                            |
-| --------- | ---------------------------------------------------------------------------------------- |
-| `s < e`   | We stop when **start meets end** (single index left → peak found)                        |
-| `s <= e`  | Typical binary search for exact value (may over-shoot + cause mid+1 out of bound checks) |
-
-#### ⚠️ Why Risk With `s <= e`?
-
-- In this problem, we always check `arr[mid + 1]`.
-    
-- If `mid == last index`, `mid + 1` becomes **out of bounds** → CRASH.
-    
-
-✅ Using `s < e` ensures `mid + 1` is ALWAYS valid.
-
-### 🔁 Why `e = mid` and NOT `e = mid - 1`?
-
-When `arr[mid] > arr[mid + 1]`:
-
-```cpp
-  (Descending Part)
-    /\
-   /  \
-  /    \
-      mid   mid+1
-```
-
-- This means **peak is on the left side OR mid itself can be the peak**.
-    
-- So, we must **keep mid** in our search.  
-    → `e = mid`
-    
-
-#### ❌ If we use `e = mid - 1`:
-
-We would **skip the current mid**, possibly missing the peak.
-
-==we use first if part to check if we are on the left slope and if we are on left slope then we will just move start to mid+1 which will eventually points to peek when arr[mid(peek)] and arr[mid+1(now right slope)] so false now s is pointing to peek and for the right slope i dont understand why its storing mid always
-
-### ✅ First, What You Already Understood (Correct)
-
-✔ **Left slope** (`arr[mid] < arr[mid+1]`)  
-→ Move `start = mid + 1`  
-→ Because peak is on the **right side**
-
-### 🤔 Your Doubt:
-
-> On the right slope (descending), why do we use `e = mid` and **not `e = mid - 1`**?
-
-### 🧭 Understanding the Right Slope (Descending Part)
-
-On the **descending side**, `arr[mid] > arr[mid+1]`.
-
-Example:
-
-```Cpp
-[1, 3, 5, 7, 6, 4, 2]
-          ↑   ↑
-        mid  mid+1
-```
-
-here:
-
-```cpp
-arr[mid] = 7   (bigger)
-arr[mid+1] = 6 (smaller)
-```
-
-📌 This means:  
-➡ We **already passed the peak or are at the peak**.  
-➡ The **peak is on the left side**, but **mid can still be the peak**.
-
-### 🧠 Key Rule:
-
-When `arr[mid] > arr[mid+1]` ↠ `mid` might be the **actual peak**!
-
-So we **cannot skip mid** by doing `e = mid - 1`.  
-We **must include mid again** → `e = mid`.
-
-### 🗺️ Visual Direction of Search
-
-#### On Left Slope (Increasing) → Peak is RIGHT
-
-```cpp
-   /  (move right)
-  /
- /
-s     mid      e
-```
-
-→ **`s = mid + 1`**
-
-#### On Right Slope (Decreasing) → Peak is LEFT or HERE!
-
-```cpp
-    \ (move left but include mid)
-     \
-s     mid     e
-```
-
-→ **`e = mid`** (include mid because it might be peak!)
-
-### 🔍 Final Converging to Peak
-
-Eventually `s == e`, and both point to the peak index. // this will cause the loop to exit
-
-### 🧾 Summary in Your Own Terms (Easy to Memorize):
-
-|Situation|Condition|Movement|Why|
-|---|---|---|---|
-|Left slope (still climbing)|`arr[mid] < arr[mid+1]`|`s = mid + 1`|Peak is ahead (right)|
-|Right slope / Peak area|`arr[mid] > arr[mid+1]`|`e = mid`|Mid _might be the peak_|
-
-### 💬 In Your Words (What You Should Say in Interview)
-
-> "We move right when slope is ascending.  
-> But on descending, we move left using `e = mid`, not `mid-1`, because `mid` can still be the peak itself."
-
-### ⛰ Example Where `mid` Is the Peak
-
-```cpp
-Array:
-[1,   3,   5,   8,   6,   4,   2]
-              ↑
-             mid  (peak = 8)
-```
-
-Let’s assume during binary search we calculate:
-
-```cpp
-s = 0, e = 6
-mid = (0 + 6) / 2 = 3
-arr[mid] = 8
-arr[mid + 1] = 6
-```
-
-✅ Condition:
-
-```cpp
-arr[mid] > arr[mid + 1]   → 8 > 6 → TRUE  (Descending side)
-```
-
-### 🧠 Now Important Decision!
-
-If we do:
-
-|Choice|Update|Result|
-|---|---|---|
-|❌ `e = mid - 1`|Remove mid|We LOSE the peak (mid = 8)|
-|✅ `e = mid`|Keep mid|Peak is still in search|
-### ❌ WRONG: `e = mid - 1` (We lose the peak!)
-
-```cpp
-[1, 3, 5, 8, 6, 4, 2]
-           ↑   (lost)
-           mid
-```
-
-You remove `8`, the actual peak → **Wrong answer!**
-
-### ✅ CORRECT: `e = mid` (We keep the peak)
-
-Because **mid itself can be the peak** if:
-
-```cpp
-arr[mid] > arr[mid - 1]  AND  arr[mid] > arr[mid + 1]
-```
-
-(Which is true in this case: `8 > 5` and `8 > 6`)
-
-### 🗣 Final Interview Answer from You
-
-> "When `arr[mid] > arr[mid+1]`, we are on the right side or at the peak.  
-> We set `e = mid` because mid might still be the peak itself.  
-> If we used `mid-1`, we might skip and lose the peak."
-
-**Array:**  
-`[1, 3, 5, 8, 6, 4, 2]`
-
-We are using **Binary Search** with the condition:
-
-```cpp
-while (s < e) {
-    int mid = s + (e - s) / 2;
-    if (arr[mid] < arr[mid + 1]) { // We're on the left slope
-        s = mid + 1;
-    } else {                      // We're on the right slope or at peak
-        e = mid;
-    }
-}
-return s; // or return e;
-```
-
-### **Index View**
-
-|Index|0|1|2|3|4|5|6|
-|---|---|---|---|---|---|---|---|
-|Value|1|3|5|8|6|4|2|
-
-Peak = `8` at index **3**
-
-### 🔎 **Dry Run Step-by-Step**
-
-|Step|`s`|`e`|`mid`|`arr[mid]`|`arr[mid+1]`|Condition|Action|
-|---|---|---|---|---|---|---|---|
-|**1**|0|6|`3`|8|6|`8 < 6` → **false**|`e = mid` → `e = 3`|
-|**2**|0|3|`1`|3|5|`3 < 5` → **true**|`s = mid + 1` → `s = 2`|
-|**3**|2|3|`2`|5|8|`5 < 8` → **true**|`s = mid + 1` → `s = 3`|
-
-Now:  
-`s = 3`, `e = 3` → `while(s < e)` stops.
-
-🔚 **Return `s = 3`**, which is the peak index (value = 8).
-
-### 🤔 Why Did We Set `e = mid` When Falling Down?
-
-At **Step 1**, mid = 3 → `8 < 6` → false  
-This means **we are on the right side of the peak or at the peak itself**
-
-- We **do not drop `mid`**, because `mid` itself **may be the peak**.
-    
-- That’s why we assign **`e = mid`**, not `mid - 1`.
-    
-
-If we used `mid - 1`, we might **skip the peak**!
-
-### 🎯 Key Observations
-
-#### 🔼 Left Slope Case (`arr[mid] < arr[mid+1]`)
-
-We move **right → `s = mid + 1`** because we know peak is ahead.
-
-#### 🔽 Right Slope or Peak (`arr[mid] >= arr[mid+1]`)
-
-We move **left, but safely → `e = mid`** because `mid` could be the peak.
-
-### 🧠 Final Logic
-
-|Situation|What it means|Move|
-|---|---|---|
-|`arr[mid] < arr[mid+1]`|You are on **left slope**|`s = mid + 1`|
-|`arr[mid] >= arr[mid+1]`|You are on **right slope or at peak**|`e = mid`|
 
 # Intutive Approach
 
@@ -1592,3 +1287,5 @@ Returns a refined √n accurate up to `pre` decimal places.
 
 
 ---
+# Book Allocation Problem
+
