@@ -148,6 +148,7 @@ Result:
 A---B---C---F------M   main
          \        /
           D---E---    feature
+          
 ```
 
 #### Why needed?
