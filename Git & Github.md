@@ -106,6 +106,7 @@ You are on `main` and run:
 
 ```bash
 git merge feature
+
 ```
 
 Since `main` is still at `C` and has no new commits, Git simply moves `main` forward to `E`. (meaning moves the head pointer)
