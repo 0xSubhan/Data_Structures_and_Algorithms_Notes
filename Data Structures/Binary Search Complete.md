@@ -1586,7 +1586,7 @@ k = 2
 
 - `isPossible()` → O(n)
     
-- Binary search → O(log(sum))
+- Binary search → O(log(n)) : n = sum of pages !!!
     
 
 ### Total:
@@ -1625,5 +1625,70 @@ Think of it like:
     
 
 ==so book allocation problem in simple term is minimizing the maximum load
+
+---
+# Painter's Partition Problem
+
+https://www.geeksforgeeks.org/problems/the-painters-partition-problem1535/1
+
+```cpp
+class Solution {
+  public:
+    
+    bool isPossible(vector<int>& arr, int k,int size,int mid)
+    {
+        int painterCount = 1;
+        int timeSum = 0;
+        
+        for(int i=0; i < size; i++)
+        {
+            if(arr[i]+timeSum <= mid)
+            {
+                timeSum += arr[i];
+            }
+            else
+            {
+                painterCount++;
+                if(painterCount > k || arr[i] > mid)
+                {
+                    return false;
+                }
+                timeSum = arr[i]; 
+            }
+        }
+        return true;
+    }
+  
+    int minTime(vector<int>& arr, int k) {
+        // code here
+        int ans = -1;
+        int sum = 0;
+        int size = arr.size();
+        if( k > size ) return ans;
+        for(int i=0; i < size; i++)
+        {
+            sum += arr[i];
+        }
+        int s = 0; int e = sum;
+        
+        int mid = s + (e-s) / 2;
+        
+        while(s <= e)
+        {
+            if( isPossible(arr,k,size,mid) )
+            {
+                e = mid - 1;
+                ans = mid;
+            }
+            else
+            {
+                s = mid + 1;
+            }
+            mid = s + (e-s) / 2;
+        }
+        return ans;
+    }
+};
+```
 
 ---
