@@ -1289,298 +1289,74 @@ Returns a refined √n accurate up to `pre` decimal places.
 ---
 # Book Allocation Problem
 
-Given an array **arr[]** of integers, where each element **arr[i]** represents the number of pages in the i-th book. You also have an integer **k** representing the number of students. The task is to allocate books to each student such that:
+![[Book_allocation_problem_notes.pdf]]
 
-- Each student receives atleast one book.
-- Each student is assigned a contiguous sequence of books.
-- No book is assigned to more than one student.
-- All books must be allocated.
-
-The objective is to **minimize the maximum number of pages** assigned to any student. In other words, out of all possible allocations, find the arrangement where the student who receives the most pages still has the **smallest possible maximum**.
-
-**Note:** If it is not possible to allocate books to all students, return **-1**.
-
-**Examples:**
-
-```
-**Input:** arr[] = [12, 34, 67, 90], k = 2
-**Output:** 113
-**Explanation:** Allocation can be done in following ways:  
-=> [12] and [34, 67, 90] Maximum Pages = 191  
-=> [12, 34] and [67, 90] Maximum Pages = 157  
-=> [12, 34, 67] and [90] Maximum Pages = 113.  
-The third combination has the minimum pages assigned to a student which is 113.
-```
-
-```
-**Input:** arr[] = [15, 17, 20], k = 5  
-**Output:** -1  
-**Explanation:** Since there are more students than total books, it's impossible to allocate a book to each student.
-```
-
-```
-**Constraints:**  
-1 ≤ arr.size() ≤ 106  
-1 ≤ arr[i], k ≤ 103
-```
-
-### Solution
+# Solution
 
 ```cpp
 class Solution {
   public:
   
-    bool isPossible(vector<int> &arr, int size ,int k,int mid)
+    bool isPossible(vector<int> &arr, int k, int size, int mid)
     {
-        int studentCount = 1;
-        int sumPage = 0;
+        int pageSum = 0;
+        int student = 1;
+        
         for(int i = 0; i < size; i++)
         {
-            if( sumPage + arr[i] <= mid )
+            if( arr[i] + pageSum <= mid )
             {
-                sumPage += arr[i];
+                pageSum += arr[i]; 
             }
             else
             {
-                studentCount++;
-                if( studentCount > k || arr[i] > mid )
-                {
-                    return false;
-                }
-                sumPage = arr[i];
+                student++;
+                pageSum = arr[i];
+                if( arr[i] > mid || student > k ) return false;
             }
         }
         return true;
     }
   
-  
     int findPages(vector<int> &arr, int k) {
         // code here
         int ans = -1;
+        int maxi = -1;
         int size = arr.size();
-        // If number of students is greater than number of book then return -1 !
+        
         if(k > size) return ans;
-        // Search Space Initialization !
+        
+        for(int i = 0; i < size; i++)
+        {
+            maxi = max(maxi,arr[i]);
+        }
         int sum = 0;
         for(int i = 0; i < size; i++)
         {
             sum += arr[i];
         }
-        int s = 0; int e = sum;
-        int mid = s + (e-s) / 2;
+        int low = maxi;
+        int high = sum;
         
-        while( s <= e )
+        int mid = low + (high-low) / 2;
+        
+        while(low <= high)
         {
-            if( isPossible(arr,size,k,mid) )
+            if( isPossible(arr,k,size,mid) )
             {
                 ans = mid;
-                e = mid - 1;
+                high = mid - 1;
             }
             else
             {
-                s = mid + 1;
+                low = mid + 1;
             }
-            mid = s + (e-s) / 2;
+            mid = low + (high-low) / 2;
         }
         return ans;
     }
 };
 ```
-
-This is a classic **“Allocate Minimum Number of Pages”** problem, and your code is using a very important technique: **Binary Search on Answer**.
-
-Let’s break it down properly so you _actually understand the logic_, not just memorize it.
-
-# 🔹 Problem Summary
-
-You are given:
-
-- `arr[i]` → number of pages in each book
-    
-- `k` → number of students
-    
-
-### Rules:
-
-1. Each student gets **contiguous books**
-    
-2. Every student must get **at least one book**
-    
-3. You want to **minimize the maximum pages assigned to any student**
-    
-
-# 🔹 Key Idea (Most Important Insight)
-
-Instead of distributing books directly, we:  
-👉 **Guess the answer (`mid`) = maximum pages a student can get**
-
-Then we check:
-
-> “Is it possible to distribute books so that no student gets more than `mid` pages?”
-
-This is what `isPossible()` does.
-
-# 🔹 Function: `isPossible(...)`
-
-```cpp
-bool isPossible(vector<int> &arr, int size ,int k,int mid)
-```
-
-### What it does:
-
-It tries to assign books **greedily** to students without exceeding `mid`.
-
-## 🔸 Step-by-step logic:
-
-```cpp
-int studentCount = 1;
-int sumPage = 0;
-```
-
-- Start with first student
-    
-- `sumPage` tracks pages assigned to current student
-    
-
-### Loop through books:
-
-```cpp
-for(int i = 0; i < size; i++)
-```
-
-### Case 1: If current book can be added
-
-```cpp
-if(sumPage + arr[i] <= mid)
-```
-
-👉 Assign book to current student
-
-```cpp
-sumPage += arr[i];
-```
-
-### Case 2: Cannot add → give to next student
-
-```cpp
-else
-{
-    studentCount++;
-```
-
-👉 New student takes this book
-
-### Important checks:
-
-```cpp
-if(studentCount > k || arr[i] > mid)
-```
-
-- If students exceed `k` → ❌ not possible
-    
-- If a single book > `mid` → ❌ impossible
-    
-
-### Assign current book to new student:
-
-```cpp
-sumPage = arr[i];
-```
-
-### If loop finishes:
-
-```cpp
-return true;
-```
-
-👉 Means distribution was possible within `mid`
-
-# 🔹 Main Function: `findPages(...)`
-
-This is where **binary search** happens.
-
-## 🔸 Step 1: Define search space
-
-```cpp
-int sum = 0;
-for(int i = 0; i < size; i++)
-{
-    sum += arr[i];
-}
-```
-
-- Minimum possible answer = `0` (not optimal, but works)
-    
-- Maximum = sum of all pages (one student gets all)
-    
-
-```cpp
-int s = 0;
-int e = sum;
-```
-
-## 🔸 Step 2: Binary Search
-
-```cpp
-while(s <= e)
-```
-
-### Compute mid:
-
-```cpp
-int mid = s + (e - s) / 2;
-```
-
-### Case 1: If possible
-
-```cpp
-if(isPossible(arr,size,k,mid))
-```
-
-👉 Try to minimize further
-
-```cpp
-ans = mid;
-e = mid - 1;
-```
-
-### Case 2: Not possible
-
-```cpp
-else
-{
-    s = mid + 1;
-}
-```
-
-👉 Increase allowed pages
-
-# 🔹 Why Binary Search Works Here
-
-Because the answer space is **monotonic**:
-
-- If `mid` is possible → any larger value is also possible
-    
-- If `mid` is not possible → any smaller value is also not possible
-    
-
-This makes it perfect for binary search.
-
-# 🔹 Example Walkthrough
-
-```
-arr = [10, 20, 30, 40]
-k = 2
-```
-
-### Possible splits:
-
-- [10,20,30] + [40] → max = 60
-    
-- [10,20] + [30,40] → max = 70
-    
-
-👉 Minimum possible = **60**
 
 # 🔹 Time Complexity
 
@@ -1594,22 +1370,6 @@ k = 2
 ```
 O(n * log(sum))
 ```
-
-# 🔹 Subtle Improvement (Important)
-
-Your search space:
-
-```cpp
-int s = 0;
-```
-
-Better would be:
-
-```cpp
-int s = max(arr)
-```
-
-👉 Because no student can take less than the largest single book.
 
 # 🔹 Intuition Summary
 
