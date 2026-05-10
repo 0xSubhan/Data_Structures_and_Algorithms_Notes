@@ -1507,5 +1507,4 @@ class Solution {
 };
 ```
 
-
 ---
