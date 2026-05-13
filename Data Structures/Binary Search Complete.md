@@ -2058,7 +2058,6 @@ That is the key proof behind the approach.
 
 
 
-
 ```cpp
 class Solution {
   public:
