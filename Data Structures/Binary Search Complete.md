@@ -2052,64 +2052,63 @@ no other placement can
 That is the key proof behind the approach.
 
 
-
-
-
-
-
-
 ```cpp
 class Solution {
   public:
   
-    bool isPossible(vector<int> &stalls, int k,int size,int mid)
+  
+    bool isPossibleDistance(vector<int> &stalls, int k,int minimum_distance)
     {
         int cowCount = 1;
         int lastPos = stalls[0];
         
-        for(int i = 0; i < size; i++)
+        for(int i = 0; i < stalls.size(); i++)
         {
-            if( stalls[i] - lastPos >= mid )
+            if(stalls[i] - lastPos >= minimum_distance )
             {
                 cowCount++;
-                if(cowCount == k) return true;
                 lastPos = stalls[i];
+                if( cowCount == k ) return true;
             }
         }
         return false;
     }
   
+  
     int aggressiveCows(vector<int> &stalls, int k) {
-        // code here
+        // First Sort Distamce Array !
         sort(stalls.begin(),stalls.end());
+        
+        // answer
         int ans = -1;
-        int size = stalls.size();
-        int s = 0;
-        int maxi = -1;
-        for(int i = 0; i < size; i++)
-        {
-            maxi = max(maxi,stalls[i]);
-        }
-        int e = maxi;
+        
+        // Define Search Space
+        int s = stalls[0]; // Smallest Distance in the array will be at 0 due to sorting !
+        int last_index = stalls.size()-1;
+        int largest_possible_distance = stalls[last_index] - stalls[0];
+        int e = largest_possible_distance; // Largest Distance
+        
+        // Define possible minimum distance
         int mid = s + (e-s) / 2;
         
         while( s <= e )
         {
-            if( isPossible(stalls,k,size,mid) )
+            if( isPossibleDistance(stalls,k,mid) )
             {
-                ans = mid;
                 s = mid + 1;
+                ans = mid;
             }
-            else
+            else // If distance was not possible then bigger distance is also not possible so look for smaller distance
             {
-                e = mid - 1;
+                e = mid - 1; 
             }
             mid = s + (e-s) / 2;
         }
+        
         return ans;
+
     }
 };
 ```
-
 
 ---
