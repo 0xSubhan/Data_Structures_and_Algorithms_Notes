@@ -1656,7 +1656,8 @@ Example:
 So binary search range:
 
 ```
-low = 1high = 8
+low = 1
+high = 8
 ```
 
 # What Are We Binary Searching?
@@ -2083,7 +2084,7 @@ class Solution {
         int ans = -1;
         
         // Define Search Space
-        int s = stalls[0]; // Smallest Distance in the array will be at 0 due to sorting !
+        int s = 0; 
         int last_index = stalls.size()-1;
         int largest_possible_distance = stalls[last_index] - stalls[0];
         int e = largest_possible_distance; // Largest Distance
