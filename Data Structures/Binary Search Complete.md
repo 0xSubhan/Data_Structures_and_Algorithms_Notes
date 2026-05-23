@@ -1638,7 +1638,7 @@ What can be the minimum distance?
 ### Lowest possible
 
 ```
-1
+0
 ```
 
 ### Highest possible
