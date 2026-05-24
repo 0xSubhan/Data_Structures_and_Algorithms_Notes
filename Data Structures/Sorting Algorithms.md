@@ -261,3 +261,121 @@ Reason:
 - Not efficient compared to modern sorting algorithms
 
 ---
+# Bubble Sort
+
+## Definition
+
+Bubble Sort is a sorting algorithm that:
+
+- compares adjacent elements
+- swaps them if they are in the wrong order
+- repeats the process until the array becomes sorted
+
+Largest elements “bubble up” to the end after every pass.
+
+```cpp
+// Online C++ compiler to run C++ program online
+#include <iostream>
+#include <utility>
+
+void BubbleSort(int arr[],int size)
+{
+    for(int i = 0; i < size - 1; i++)
+    {
+        for(int j = 0 ; j < size - i - 1 ; j++)
+        {
+            if(arr[j] > arr[j+1])
+            {
+                std::swap(arr[j],arr[j+1]);
+            }
+        }
+    }
+}
+
+
+int main() {
+    
+    int arr[5] = {12,5,10,6,11};
+    int size = 5;
+    
+    for(int i = 0 ; i < size ; i++)
+    {
+        std::cout << arr[i] << " ";
+    }
+    std::cout << "\n";
+    
+    BubbleSort(arr,size);
+    
+    for(int i = 0 ; i < size ; i++)
+    {
+        std::cout << arr[i] << " ";
+    }
+    std::cout << "\n";    
+
+    return 0;
+}
+```
+
+# Outer Loop
+
+```cpp
+for (int i = 0; i < n - 1; i++)
+```
+
+Controls number of passes.
+
+## Why `n - 1` passes?
+
+Because after every pass:
+
+- one largest element reaches correct position
+
+Imagine arranging 5 students by height.
+
+If first 4 positions are already correct:
+
+- the last student automatically stands in correct place.
+
+No extra checking needed.
+
+>In our case last element mean first element which will already be sorted !
+
+# Main Idea
+
+When we say:
+
+```
+last remaining element
+```
+
+we mean:
+
+- the only element whose position was not explicitly fixed by passes
+
+In Bubble Sort:
+
+- large elements get fixed from the end
+- eventually only the smallest/front element remains
+
+And yes:  
+that remaining first element is automatically sorted.
+
+# Why `n - i - 1`?
+
+After every pass:
+
+- largest element reaches correct position at the end
+
+So we don't need to check that portion again.
+
+# Time Complexity
+
+## Worst Case
+
+Reverse sorted array.
+
+```
+O(n²)
+```
+
+---
