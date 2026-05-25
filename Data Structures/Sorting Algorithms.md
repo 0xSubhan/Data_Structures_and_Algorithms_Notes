@@ -379,3 +379,399 @@ O(n²)
 ```
 
 ---
+# Insertion Sort
+
+# Insertion Sort — Notes Style Explanation
+
+## Code
+
+```cpp
+class Solution {
+  public:
+    void insertionSort(vector<int>& arr) {
+        
+        for(int i = 0; i < arr.size(); i++)
+        {
+            int temp = arr[i];
+            int j = i-1;
+            
+            for(; j >= 0; j--)
+            {
+                if(arr[j] > temp)
+                {
+                    // Shift j to right
+                    arr[j+1] = arr[j];
+                }
+                else
+                    break;
+            }
+            
+            arr[j+1] = temp;
+        }
+    }
+};
+```
+
+# What is Insertion Sort?
+
+Insertion Sort works like arranging playing cards in your hand.
+
+You pick one element and place it at its correct position in the already sorted part of the array.
+
+# Main Idea
+
+At every iteration:
+
+- Left side → already sorted
+    
+- Current element → picked and inserted into correct position
+    
+
+# Working of Algorithm
+
+## Outer Loop
+
+```cpp
+for(int i = 0; i < arr.size(); i++)
+```
+
+This loop selects elements one by one.
+
+- `i` represents the current element to insert.
+    
+- Elements before `i` are considered sorted.
+    
+
+# Step-by-Step Understanding
+
+## Step 1: Store Current Element
+
+```cpp
+int temp = arr[i];
+```
+
+We save the current element in `temp`.
+
+Why?
+
+Because while shifting elements, the original position may get overwritten.
+
+Example:
+
+```cpp
+temp = 5
+```
+
+
+## Step 2: Start Comparing from Left Side
+
+```cpp
+int j = i - 1;
+```
+
+`j` points to the previous element.
+
+We now move backwards to find the correct position for `temp`.
+
+
+## Step 3: Shift Larger Elements
+
+```cpp
+for(; j >= 0; j--)
+```
+
+We move from right to left.
+
+
+## Condition
+
+```cpp
+if(arr[j] > temp)
+```
+
+If left element is bigger than `temp`:
+
+```cpp
+arr[j+1] = arr[j];
+```
+
+Shift it one position to the right.
+
+
+# Why Shifting?
+
+We are creating space for `temp`.
+
+Example:
+
+Before shift:
+
+```text
+[2, 5, 8, 6]
+```
+
+`temp = 6`
+
+Since `8 > 6`, shift `8` right:
+
+```text
+[2, 5, 8, 8]
+```
+
+Now position for `6` becomes available.
+
+
+## Break Condition
+
+```cpp
+else
+    break;
+```
+
+If current element is NOT greater than `temp`,  
+we found the correct position.
+
+No more shifting needed.
+
+# Final Insertion
+
+```cpp
+arr[j+1] = temp;
+```
+
+Insert `temp` into its correct position.
+
+# Important Point About `j+1`
+
+Why `j+1`?
+
+Because after loop ends:
+
+- `j` becomes one step behind the correct position.
+    
+
+So actual insertion position is:
+
+```cpp
+j + 1
+```
+
+# Complete Dry Run
+
+Array:
+
+```text
+[12, 5, 10, 6]
+```
+
+# Pass 1
+
+## i = 0
+
+```text
+temp = 12
+```
+
+No left elements.
+
+Array remains:
+
+```text
+[12, 5, 10, 6]
+```
+
+# Pass 2
+
+## i = 1
+
+```text
+temp = 5
+j = 0
+```
+
+Compare:
+
+```text
+12 > 5
+```
+
+Shift:
+
+```text
+[12, 12, 10, 6]
+```
+
+`j--`
+
+Now `j = -1`
+
+Insert:
+
+```cpp
+arr[j+1] = temp
+arr[0] = 5
+```
+
+Array:
+
+```text
+[5, 12, 10, 6]
+```
+
+# Pass 3
+
+## i = 2
+
+```text
+temp = 10
+j = 1
+```
+
+Compare:
+
+```text
+12 > 10
+```
+
+Shift:
+
+```text
+[5, 12, 12, 6]
+```
+
+`j = 0`
+
+Compare:
+
+```text
+5 > 10 ? NO
+```
+
+Break.
+
+Insert at:
+
+```text
+j+1 = 1
+```
+
+Array:
+
+```text
+[5, 10, 12, 6]
+```
+
+# Pass 4
+
+## i = 3
+
+```text
+temp = 6
+j = 2
+```
+
+Compare:
+
+```text
+12 > 6
+```
+
+Shift:
+
+```text
+[5, 10, 12, 12]
+```
+
+
+Compare:
+
+```text
+10 > 6
+```
+
+Shift:
+
+```text
+[5, 10, 10, 12]
+```
+
+
+Compare:
+
+```text
+5 > 6 ? NO
+```
+
+Break.
+
+Insert:
+
+```text
+arr[1] = 6
+```
+
+Final Array:
+
+```text
+[5, 6, 10, 12]
+```
+
+# Visualization
+
+## Before Each Pass
+
+|Pass|Sorted Part|Unsorted Part|
+|---|---|---|
+|1|12|5 10 6|
+|2|5 12|10 6|
+|3|5 10 12|6|
+|4|5 6 10 12|Done|
+
+# Time Complexity
+
+## Best Case
+
+Already sorted array:
+
+```text
+O(n)
+```
+
+Because no shifting happens.
+
+## Worst Case
+
+Reverse sorted array:
+
+```text
+O(n²)
+```
+
+Because every element shifts completely.
+
+# Space Complexity
+
+```text
+O(1)
+```
+
+No extra array used.
+
+# Key Points to Remember
+
+- Builds sorted array one element at a time
+    
+- Uses shifting instead of swapping
+    
+- Efficient for small datasets
+    
+- Stable sorting algorithm
+    
+- In-place sorting algorithm
+    
+
+# Core Logic in One Line
+
+> Pick an element, shift larger elements to the right, and insert the element at its correct position.
+
+---
