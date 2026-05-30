@@ -773,6 +773,5 @@ No extra array used.
 # Core Logic in One Line
 
 > Pick an element, shift larger elements to the right, and insert the element at its correct position.
-> 
-
+ 
 ---
